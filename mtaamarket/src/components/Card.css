@@ -1,0 +1,16 @@
+.card {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  flex: 1;
+}
+.card h3 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+.card p {
+  font-size: 0.95rem;
+  color: #555;
+}

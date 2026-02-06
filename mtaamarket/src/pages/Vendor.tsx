@@ -1,0 +1,26 @@
+import content from '../Content';
+import Card from '../components/Card';
+import Button from '../components/Button';
+import './App.css';
+
+function Vendor() {
+  return (
+    <div className="page">
+      <h1 className="page-title">{content.vendor.title}</h1>
+      <h2 className="page-subtitle">{content.vendor.subtitle}</h2>
+      <p className="page-description">{content.vendor.description}</p>
+
+      <div className="card-grid">
+        <Card title="Product Management" description="Add, edit, or remove thrift items from your store." />
+        <Card title="Sales Dashboard" description="Track your sales performance and revenue." />
+        <Card title="Customer Messages" description="Communicate directly with your buyers." />
+      </div>
+
+      <div className="button-container">
+        <Button label="Add New Product" onClick={() => alert("Add Product clicked")} />
+      </div>
+    </div>
+  );
+}
+
+export default Vendor;
