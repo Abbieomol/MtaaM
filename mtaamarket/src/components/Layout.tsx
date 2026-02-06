@@ -1,5 +1,5 @@
-import React from 'react';
 import Navbar from './Navbar';
+import '../App.css';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -7,10 +7,12 @@ type LayoutProps = {
 
 function Layout({ children }: LayoutProps) {
   return (
-    <>
+    <div className="layout">
       <Navbar />
-      <main className="layout-container">{children}</main>
-    </>
+      <main className="layout-container">
+        {children}
+      </main>
+    </div>
   );
 }
 

@@ -1,10 +1,13 @@
 import content from '../content';
 import Card from '../components/Card';
+import Navbar from '../components/Navbar';
 import '../App.css';
 
 function Home() {
   return (
     <div className="page">
+      <Navbar />
+
       <h1 className="page-title">{content.home.title}</h1>
       <h2 className="page-subtitle">{content.home.subtitle}</h2>
       <p className="page-description">{content.home.description}</p>
