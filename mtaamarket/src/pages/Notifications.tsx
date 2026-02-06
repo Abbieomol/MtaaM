@@ -1,6 +1,6 @@
 import content from '../content';
 import Card from '../components/Card';
-import './App.css';
+import '../App.css';
 
 function Notifications() {
   return (

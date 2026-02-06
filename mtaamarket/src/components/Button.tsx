@@ -1,4 +1,4 @@
-import './Button.css';
+import '../App.css';
 
 type ButtonProps = {
   label: string;

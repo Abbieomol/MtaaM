@@ -1,7 +1,7 @@
 import content from '../content';
 import Button from '../components/Button';
 import { Link } from 'react-router-dom';
-import './Signup.css';
+import '../App.css';
 
 function Signup() {
   return (

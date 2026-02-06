@@ -1,4 +1,4 @@
-import './Card.css';
+import '../App.css';
 
 type CardProps = {
   title: string;

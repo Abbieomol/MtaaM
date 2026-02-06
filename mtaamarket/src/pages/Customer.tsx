@@ -1,7 +1,7 @@
 import content from '../content';
 import Card from '../components/Card';
 import Button from '../components/Button';
-import './App.css';
+import '../App.css';
 
 function Customer() {
   return (

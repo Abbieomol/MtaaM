@@ -1,7 +1,7 @@
 import content from '../content';
 import Button from '../components/Button';
 import { Link } from 'react-router-dom';
-import './Login.css';
+import '../App.css';
 
 function Login() {
   return (
