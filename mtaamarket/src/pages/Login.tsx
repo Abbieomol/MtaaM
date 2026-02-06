@@ -1,4 +1,4 @@
-import content from '../Content';
+import content from '../content';
 import Button from '../components/Button';
 import { Link } from 'react-router-dom';
 import './Login.css';
