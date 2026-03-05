@@ -1,11 +1,13 @@
 import content from '../content';
 import Card from '../components/Card';
 import Button from '../components/Button';
+import Navbar from '../components/Navbar';
 import '../App.css';
 
 function Vendor() {
   return (
     <div className="page">
+      <Navbar />
       <h1 className="page-title">{content.vendor.title}</h1>
       <h2 className="page-subtitle">{content.vendor.subtitle}</h2>
       <p className="page-description">{content.vendor.description}</p>
