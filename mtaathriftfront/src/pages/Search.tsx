@@ -2,6 +2,7 @@ import { useState } from 'react';
 import content from '../content';
 import Card from '../components/Card';
 import Button from '../components/Button';
+import Navbar from '../components/Navbar';
 import '../App.css';
 
 function Search() {
@@ -17,6 +18,7 @@ function Search() {
 
   return (
     <div className="page">
+      <Navbar />
       <h1 className="page-title">{content.search.title}</h1>
       <h2 className="page-subtitle">{content.search.subtitle}</h2>
       <p className="page-description">{content.search.description}</p>

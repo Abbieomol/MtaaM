@@ -2,11 +2,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #27ae60;
+  background: #00311a;
   padding: 15px 30px;
 }
 .navbar h2 {
-  color: #fff;
+  color: #d5fbad
 }
 .navbar ul {
   list-style: none;
@@ -14,7 +14,7 @@
   gap: 20px;
 }
 .navbar ul li a {
-  color: #fff;
+  color: #d5fbad;
   font-weight: bold;
 }
 .navbar ul li a:hover {

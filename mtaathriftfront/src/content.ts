@@ -1,6 +1,6 @@
 const pageContent = {
   home: {
-    title: "Karibu MtaaMarket",
+    title: "Karibu Mtaathrifting",
     subtitle: "Your neighborhood thrift marketplace",
     description: "Discover second-hand treasures, shop thrift clothes, and support local sellers."
   },
@@ -20,16 +20,16 @@ const pageContent = {
     description: "Filter by category, size, price, and condition to find exactly what you need.",
     categories: ["All", "Tops", "Bottoms", "Dresses", "Shoes", "Accessories", "Outerwear"],
     sizes: ["All", "XS", "S", "M", "L", "XL"],
-    prices: ["All", "Under $10", "$10 - $30", "$30 - $50", "Above $50"],
+    prices: ["All", "Under Ksh500", "Ksh500-1000", "Under Ksh2000", "Bei ya Duka"],
     conditions: ["All", "Like New", "Good", "Fair"]
   },
   signup: {
-    title: "Join MtaaMarket",
+    title: "Join mtaathrifting",
     subtitle: "Create your account",
     description: "Sign up to connect with vendors and enjoy exclusive discounts."
   },
   login: {
-    title: "Login to MtaaMarket",
+    title: "Login to mtaathrifting",
     subtitle: "Welcome back",
     description: "Enter your credentials to access your account."
   },

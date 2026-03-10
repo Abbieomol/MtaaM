@@ -13,9 +13,9 @@ function Notifications() {
       <p className="page-description">{content.notifications.description}</p>
 
       <div className="card-grid">
-        <Card title="Order Shipped" description="Your thrift order #1234 has been shipped and is on the way." />
-        <Card title="New Offer" description="20% off all vintage jackets this weekend only." />
-        <Card title="Vendor Message" description="Mama Mboga: Your reserved floral dress is ready for pickup." />
+        <Card title="Order Shipped" description="Your thrift order #1234 from nguoaffordable has been shipped and is on the way." />
+        <Card title="NguoAffordable New Offer" description="200shillings off all tops and dresses this weekend only." />
+        <Card title="Vendor Message" description="Toi market stall 67: Your reserved floral dress is ready for pickup." />
       </div>
     </div>
   );
