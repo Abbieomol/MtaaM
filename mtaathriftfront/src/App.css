@@ -71,6 +71,37 @@ body {
   text-decoration: underline;
 }
 
+.menu-btn{
+  font-size:20px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  margin-right:10px;
+}
+
+.sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:220px;
+  height:100%;
+  background:#f4a261;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.cart-icon{
+  margin-left:20px;
+  font-size:20px;
+}
+
+.language-btn{
+  margin-left:10px;
+  padding:5px 10px;
+  cursor:pointer;
+}
 /* Buttons */
 .btn {
   background: #00471d;

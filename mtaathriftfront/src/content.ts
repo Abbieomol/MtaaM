@@ -37,6 +37,15 @@ const pageContent = {
     title: "Vendor Portal",
     subtitle: "Grow your business",
     description: "Manage your shop, upload thrift items, and connect with customers."
+  },
+    cart: {
+    title: "Your Cart",
+    checkout: "Checkout Selected Items",
+  },
+
+  buttons: {
+    addToCart: "Add to Cart",
+    remove: "Remove",
   }
 };
 
