@@ -1,52 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import '../styles/App.css';
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import { LanguageContext } from "../context/LanguageContext";
+import "../styles/App.css";
 
 interface FollowButtonProps {
   targetUsername: string;
 }
 
+const API_URL = "http://localhost:5000"; // your backend URL
+
 const FollowButton: React.FC<FollowButtonProps> = ({ targetUsername }) => {
+  const { translate } = useContext(LanguageContext);
   const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
+  // Fetch follow status
   useEffect(() => {
-    const token = localStorage.getItem('token');
-
-    fetch(`/api/follow-status/${targetUsername}/`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
-    })
-      .then(res => res.json())
-      .then(data => {
-        setIsFollowing(data.is_following);
+    const token = localStorage.getItem("token");
+    const fetchStatus = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/follow-status/${targetUsername}/`, {
+          headers: { Authorization: `Token ${token}` },
+        });
+        setIsFollowing(res.data.is_following);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load follow status");
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchStatus();
   }, [targetUsername]);
 
+  // Toggle follow/unfollow
   const toggleFollow = async () => {
-    const token = localStorage.getItem('token');
-
-    const res = await fetch(`/api/toggle-follow/${targetUsername}/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
-      },
-    });
-    const data = await res.json();
-    setIsFollowing(data.is_following);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.post(
+        `${API_URL}/api/toggle-follow/${targetUsername}/`,
+        {},
+        { headers: { Authorization: `Token ${token}` } }
+      );
+      setIsFollowing(res.data.is_following);
+    } catch (err) {
+      console.error(err);
+      setError("Action failed");
+    }
   };
 
   if (loading) return null;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <button
-      className={`follow-btn ${isFollowing ? 'unfollow' : 'follow'}`}
+      className={`follow-btn ${isFollowing ? "unfollow" : "follow"}`}
       onClick={toggleFollow}
     >
-      {isFollowing ? 'Unfollow' : 'Follow'}
+      {isFollowing ? translate("Unfollow") : translate("Follow")}
     </button>
   );
 };
