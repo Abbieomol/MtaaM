@@ -14,6 +14,8 @@ interface Product {
   price?: number;
 }
 
+type UserRole = "customer" | "vendor";
+
 const Home: React.FC = () => {
   const { translate } = useContext(LanguageContext);
 
@@ -21,7 +23,24 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  // Fetch products from backend
+  const [, setRole] = useState<UserRole>("customer");
+
+  
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      try {
+        const parsed = JSON.parse(user);
+        if (parsed.role) {
+          setRole(parsed.role);
+        }
+      } catch (e) {
+        console.error("Failed to parse user", e);
+      }
+    }
+  }, []);
+
+  
   useEffect(() => {
     const getProducts = async () => {
       try {

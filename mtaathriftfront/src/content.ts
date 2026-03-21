@@ -38,20 +38,21 @@ const pageContent = {
     description:
       "Track your orders, manage your profile, and explore personalized deals.",
   },
+  search:  {
+     title: "Search Thrift Items",
+    subtitle: "Find the best deals near you",
+    description: "Browse through a variety of second-hand fashion items.",
+
+    categories: ["All", "Jackets", "Dresses", "Shoes", "Accessories"],
+    sizes: ["All", "XS", "S", "M", "L", "XL"],
+    prices: ["All", "0-300", "300-800", "800-1500", "1500+"],
+    conditions: ["All", "New", "Like New", "Good", "Fair"],
+  },
   notifications: {
     title: "Notifications",
     subtitle: "Stay informed",
     description: "Get updates on offers, delivery alerts, and vendor messages.",
-  },
-  search: {
-    title: "Search Marketplace",
-    subtitle: "Find thrift items easily",
-    description:
-      "Filter by category, size, price, and condition to find exactly what you need.",
-    categories: ["All", "Tops", "Bottoms", "Dresses", "Shoes", "Accessories", "Outerwear"],
-    sizes: ["All", "XS", "S", "M", "L", "XL"],
-    prices: ["All", "Under Ksh500", "Ksh500-1000", "Under Ksh2000", "Bei ya Duka"],
-    conditions: ["All", "Like New", "Good", "Fair"],
+    categories: ["All", "Orders", "Offers", "Messages"],
   },
   signup: {
     title: "Join mtaathrifting",

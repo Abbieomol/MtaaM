@@ -1,23 +1,39 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useContext } from "react";
 import type { User } from "../types/types";
 import { LanguageContext } from "../context/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import "../App.css";
 
-type Props = {
-  user: User;
-  onLogout: () => void;
-};
-
-function Navbar({ user, onLogout }: Props) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+function Navbar() {
   const { translate } = useContext(LanguageContext);
+  const navigate = useNavigate();
+
+  // initialize user from localStorage 
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        return JSON.parse(storedUser);
+      } catch {
+        console.error("Invalid user data in localStorage");
+      }
+    }
+    return null;
+  });
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  };
 
   return (
     <>
       <nav className="navbar">
-        {/* Menu button */}
         <button
           className="menu-btn"
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -25,10 +41,8 @@ function Navbar({ user, onLogout }: Props) {
           ☰
         </button>
 
-        {/* Title */}
         <h2 className="navbar-title">MtaaThrifting</h2>
 
-        {/* Links */}
         <ul className="navbar-links">
           <li><Link to="/">{translate("Home")}</Link></li>
           <li><Link to="/customer">{translate("Customer")}</Link></li>
@@ -39,64 +53,42 @@ function Navbar({ user, onLogout }: Props) {
           <li><Link to="/vendor">{translate("Vendor")}</Link></li>
         </ul>
 
-        {/* Right side */}
         <div className="navbar-right">
-          <Link to="/cart" className="cart-icon">
-            🛒
-          </Link>
+          <Link to="/cart" className="cart-icon">🛒</Link>
 
-          <span className="navbar-user">
-            {user.username}
-          </span>
+          {user && <span className="navbar-user">{user.username || user.email}</span>}
 
-          <button className="logout-btn" onClick={onLogout}>
-            Logout
-          </button>
+          {user && (
+            <button className="logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          )}
 
           <LanguageSwitcher />
         </div>
       </nav>
 
-      {/* Sidebar (mobile) */}
       {sidebarOpen && (
         <div className="sidebar">
-          <Link to="/" onClick={() => setSidebarOpen(false)}>
-            {translate("Home")}
-          </Link>
+          <Link to="/" onClick={() => setSidebarOpen(false)}>{translate("Home")}</Link>
+          <Link to="/customer" onClick={() => setSidebarOpen(false)}>{translate("Customer")}</Link>
+          <Link to="/notifications" onClick={() => setSidebarOpen(false)}>{translate("Notifications")}</Link>
+          <Link to="/search" onClick={() => setSidebarOpen(false)}>{translate("Search")}</Link>
+          <Link to="/signup" onClick={() => setSidebarOpen(false)}>{translate("Signup")}</Link>
+          <Link to="/login" onClick={() => setSidebarOpen(false)}>{translate("Login")}</Link>
+          <Link to="/vendor" onClick={() => setSidebarOpen(false)}>{translate("Vendor")}</Link>
 
-          <Link to="/customer" onClick={() => setSidebarOpen(false)}>
-            {translate("Customer")}
-          </Link>
-
-          <Link to="/notifications" onClick={() => setSidebarOpen(false)}>
-            {translate("Notifications")}
-          </Link>
-
-          <Link to="/search" onClick={() => setSidebarOpen(false)}>
-            {translate("Search")}
-          </Link>
-
-          <Link to="/signup" onClick={() => setSidebarOpen(false)}>
-            {translate("Signup")}
-          </Link>
-
-          <Link to="/login" onClick={() => setSidebarOpen(false)}>
-            {translate("Login")}
-          </Link>
-
-          <Link to="/vendor" onClick={() => setSidebarOpen(false)}>
-            {translate("Vendor")}
-          </Link>
-
-          <button
-            className="logout-btn"
-            onClick={() => {
-              setSidebarOpen(false);
-              onLogout();
-            }}
-          >
-            Logout
-          </button>
+          {user && (
+            <button
+              className="logout-btn"
+              onClick={() => {
+                setSidebarOpen(false);
+                handleLogout();
+              }}
+            >
+              Logout
+            </button>
+          )}
         </div>
       )}
     </>

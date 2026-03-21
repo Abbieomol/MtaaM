@@ -26,3 +26,14 @@ export type ApiError = {
   message: string;
   errors?: Record<string, string[]>;
 };
+export type NotificationCategory =
+  | "Orders"
+  | "Offers"
+  | "Messages";
+
+export type Notification = {
+  id: number;
+  title: string;
+  description: string;
+  category: NotificationCategory;
+};
