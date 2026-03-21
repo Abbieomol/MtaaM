@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import Sidebar from "../../../../mtaathriftfront/src/components/Sidebar";
+import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
 import type { User } from "../types/types";
 import "../styles/App.css";
@@ -11,27 +11,38 @@ type Props = {
 
 type Settings = {
   colorScheme: "dark" | "light" | "multicolor";
-  accentColor: "green" | "orange" | "blue" | "purple" | "pink" | "red";
-  sidebarStyle: "default" | "compact" | "expanded" | "minimal"  | "collapsed";
+  accentColor: "green" | "orange" | "blue" | "purple" | "pink" | "red" | "yellow";
+  sidebarStyle: "default" | "compact" | "expanded" | "minimal" | "collapsed";
   postLayout: "grid" | "list" | "masonry" | "carousel";
   textSize: "small" | "medium" | "large";
   notificationsEnabled: boolean;
+  allowVendorMessaging: boolean;
+  emailNotifications: boolean;
   autoplayVideos: boolean;
   profileVisibility: "public" | "private";
   language: "en" | "fr" | "es" | "swahili" | "arabic";
 };
 
 export default function SettingsPage({ user, onLogout }: Props) {
-  const [settings, setSettings] = useState<Settings>({
-    colorScheme: "light",
-    accentColor: "green",
-    sidebarStyle: "default",
-    postLayout: "grid",
-    textSize: "medium",
-    notificationsEnabled: true,
-    autoplayVideos: false,
-    profileVisibility: "public",
-    language: "en",
+  
+  const [settings, setSettings] = useState<Settings>(() => {
+    const saved = localStorage.getItem(`settings-${user.username}`);
+
+    return saved
+      ? JSON.parse(saved)
+      : {
+        colorScheme: "light",
+        accentColor: "green",
+        sidebarStyle: "default",
+        postLayout: "grid",
+        textSize: "medium",
+        notificationsEnabled: true,
+        emailNotifications: false,
+        autoplayVideos: false,
+        profileVisibility: "public",
+        allowVendorMessaging: false,
+        language: "en",
+        };
   });
 
   const applySettings = (s: Settings) => {
@@ -42,19 +53,18 @@ export default function SettingsPage({ user, onLogout }: Props) {
   };
 
   useEffect(() => {
-    const saved = localStorage.getItem(`settings-${user.username}`);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setSettings(parsed);
-      applySettings(parsed);
-    }
-  }, [user.username]);
+    applySettings(settings);
+  }, [settings]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-    const checked = type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
+    const checked =
+      type === "checkbox"
+        ? (e.target as HTMLInputElement).checked
+        : undefined;
+
     setSettings((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -70,12 +80,14 @@ export default function SettingsPage({ user, onLogout }: Props) {
   return (
     <div className="settings-page">
       <Navbar user={user} onLogout={onLogout} />
+
       <div className="settings-wrapper">
         <Sidebar />
+
         <main className="settings-main">
           <h2>Customize Your Experience</h2>
 
-          {/* Theme */}
+          
           <div className="setting-group">
             <label htmlFor="colorScheme">Theme</label>
             <select
@@ -87,11 +99,23 @@ export default function SettingsPage({ user, onLogout }: Props) {
               <option value="light">Light</option>
               <option value="dark">Dark</option>
               <option value="multicolor">Multicolor</option>
-              
             </select>
           </div>
 
-          {/* Accent Color */}
+      {user.role === "customer" && (
+  <div className="setting-group checkbox-group">
+    <label>
+      <input
+        type="checkbox"
+        name="allowVendorMessaging"
+        checked={settings.allowVendorMessaging}
+        onChange={handleChange}
+      />
+      Allow messaging from vendors
+    </label>
+  </div>
+)} 
+
           <div className="setting-group">
             <label htmlFor="accentColor">Accent Color</label>
             <select
@@ -110,7 +134,19 @@ export default function SettingsPage({ user, onLogout }: Props) {
             </select>
           </div>
 
-          {/* Sidebar */}
+          <div className="setting-group checkbox-group">
+            <label>
+            <input
+              type="checkbox"
+              name="emailNotifications"
+              checked={settings.emailNotifications}
+              onChange={handleChange}
+              />
+              Send notifications via Email
+              </label>
+              </div>
+
+          
           <div className="setting-group">
             <label htmlFor="sidebarStyle">Sidebar Style</label>
             <select
@@ -127,7 +163,7 @@ export default function SettingsPage({ user, onLogout }: Props) {
             </select>
           </div>
 
-          {/* Post Layout */}
+        
           <div className="setting-group">
             <label htmlFor="postLayout">Post Layout</label>
             <select
@@ -140,11 +176,10 @@ export default function SettingsPage({ user, onLogout }: Props) {
               <option value="list">List</option>
               <option value="masonry">Masonry</option>
               <option value="carousel">Carousel</option>
-            
             </select>
           </div>
 
-          {/* Text Size */}
+
           <div className="setting-group">
             <label htmlFor="textSize">Text Size</label>
             <select
@@ -159,7 +194,7 @@ export default function SettingsPage({ user, onLogout }: Props) {
             </select>
           </div>
 
-          {/* Notifications */}
+
           <div className="setting-group checkbox-group">
             <label>
               <input
@@ -185,7 +220,6 @@ export default function SettingsPage({ user, onLogout }: Props) {
             </label>
           </div>
 
-          {/* Profile Visibility */}
           <div className="setting-group">
             <label htmlFor="profileVisibility">Profile Visibility</label>
             <select
