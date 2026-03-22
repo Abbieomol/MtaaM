@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import content from "../content";
 import Card from "../components/Card";
-import Navbar from "../components/Navbar";
+//import Navbar from "../components/Navbar";
 import { LanguageContext } from "../context/LanguageContext";
 import { fetchProducts } from "../services/api";
 import "../App.css";
@@ -59,7 +59,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="page">
-      <Navbar />
+      {/*<Navbar />/*}
 
       {/* Page header */}
       <h1 className="page-title">{translate(content.home.title)}</h1>

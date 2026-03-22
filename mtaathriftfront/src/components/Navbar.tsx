@@ -3,13 +3,22 @@ import { useState, useContext } from "react";
 import type { User } from "../types/types";
 import { LanguageContext } from "../context/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import {
+  FaHome,
+  FaUser,
+  FaBell,
+  FaSearch,
+  FaShoppingCart,
+  FaStore,
+  FaSignOutAlt,
+  FaHeart
+} from "react-icons/fa";
 import "../App.css";
 
 function Navbar() {
   const { translate } = useContext(LanguageContext);
   const navigate = useNavigate();
 
-  // initialize user from localStorage 
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -34,6 +43,7 @@ function Navbar() {
   return (
     <>
       <nav className="navbar">
+        {/* LEFT */}
         <button
           className="menu-btn"
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -43,24 +53,52 @@ function Navbar() {
 
         <h2 className="navbar-title">MtaaThrifting</h2>
 
-        <ul className="navbar-links">
-          <li><Link to="/">{translate("Home")}</Link></li>
-          <li><Link to="/customer">{translate("Customer")}</Link></li>
-          <li><Link to="/notifications">{translate("Notifications")}</Link></li>
-          <li><Link to="/search">{translate("Search")}</Link></li>
-          <li><Link to="/signup">{translate("Signup")}</Link></li>
-          <li><Link to="/login">{translate("Login")}</Link></li>
-          <li><Link to="/vendor">{translate("Vendor")}</Link></li>
-        </ul>
+        
+        <div className="navbar-icons">
+          <Link to="/" title={translate("Home")}>
+            <FaHome />
+          </Link>
 
+          <Link to="/customer" title={translate("Customer")}>
+            <FaUser />
+          </Link>
+
+          <Link to="/notifications" title={translate("Notifications")}>
+            <FaBell />
+          </Link>
+
+          <Link to="/search" title={translate("Search")}>
+            <FaSearch />
+          </Link>
+
+          <Link to="/wishlist" title="Wishlist">
+            <FaHeart />
+          </Link>
+
+          <Link to="/cart" title="Cart">
+            <FaShoppingCart />
+          </Link>
+
+          <Link to="/vendor" title={translate("Vendor")}>
+            <FaStore />
+          </Link>
+        </div>
+
+        {/* RIGHT */}
         <div className="navbar-right">
-          <Link to="/cart" className="cart-icon">🛒</Link>
-
-          {user && <span className="navbar-user">{user.username || user.email}</span>}
+          {user && (
+            <span className="navbar-user">
+              {user.username || user.email}
+            </span>
+          )}
 
           {user && (
-            <button className="logout-btn" onClick={handleLogout}>
-              Logout
+            <button
+              className="logout-btn"
+              onClick={handleLogout}
+              title="Logout"
+            >
+              <FaSignOutAlt />
             </button>
           )}
 
@@ -68,15 +106,48 @@ function Navbar() {
         </div>
       </nav>
 
+      {/* SIDEBAR */}
       {sidebarOpen && (
         <div className="sidebar">
-          <Link to="/" onClick={() => setSidebarOpen(false)}>{translate("Home")}</Link>
-          <Link to="/customer" onClick={() => setSidebarOpen(false)}>{translate("Customer")}</Link>
-          <Link to="/notifications" onClick={() => setSidebarOpen(false)}>{translate("Notifications")}</Link>
-          <Link to="/search" onClick={() => setSidebarOpen(false)}>{translate("Search")}</Link>
-          <Link to="/signup" onClick={() => setSidebarOpen(false)}>{translate("Signup")}</Link>
-          <Link to="/login" onClick={() => setSidebarOpen(false)}>{translate("Login")}</Link>
-          <Link to="/vendor" onClick={() => setSidebarOpen(false)}>{translate("Vendor")}</Link>
+          <Link to="/" onClick={() => setSidebarOpen(false)}>
+            {translate("Home")}
+          </Link>
+
+          <Link to="/customer" onClick={() => setSidebarOpen(false)}>
+            {translate("Customer")}
+          </Link>
+
+          <Link to="/notifications" onClick={() => setSidebarOpen(false)}>
+            {translate("Notifications")}
+          </Link>
+
+          <Link to="/search" onClick={() => setSidebarOpen(false)}>
+            {translate("Search")}
+          </Link>
+
+          <Link to="/wishlist" onClick={() => setSidebarOpen(false)}>
+            Wishlist
+          </Link>
+
+          <Link to="/cart" onClick={() => setSidebarOpen(false)}>
+            Cart
+          </Link>
+
+          <Link to="/vendor" onClick={() => setSidebarOpen(false)}>
+            {translate("Vendor")}
+          </Link>
+
+          {!user && (
+            <>
+              <Link to="/signup" onClick={() => setSidebarOpen(false)}>
+                {translate("Signup")}
+              </Link>
+
+              <Link to="/login" onClick={() => setSidebarOpen(false)}>
+                {translate("Login")}
+              </Link>
+            </>
+          )}
 
           {user && (
             <button

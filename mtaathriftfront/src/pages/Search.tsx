@@ -2,7 +2,7 @@ import { useState } from "react";
 import content from "../content";
 import Card from "../components/Card";
 import Button from "../components/Button";
-import Navbar from "../components/Navbar";
+//import Navbar from "../components/Navbar";
 import type { User } from "../types/types";
 import { mockProducts } from "../data/mockProducts"; 
 import "../App.css";
@@ -12,7 +12,8 @@ type Props = {
   onLogout: () => void;
 };
 
-function Search({ user, onLogout }: Props) {
+// eslint-disable-next-line no-empty-pattern
+function Search({  }: Props) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [size, setSize] = useState("All");
@@ -25,7 +26,7 @@ function Search({ user, onLogout }: Props) {
 
   return (
     <div className="page">
-      <Navbar user={user} onLogout={onLogout} />
+      {/*<Navbar user={user} onLogout={onLogout} /> */}
 
       <h1 className="page-title">{content.search.title}</h1>
       <h2 className="page-subtitle">{content.search.subtitle}</h2>

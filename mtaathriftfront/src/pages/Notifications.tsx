@@ -1,7 +1,7 @@
 import { useState } from "react";
 import content from "../content";
 import Card from "../components/Card";
-import Navbar from "../components/Navbar";
+//import Navbar from "../components/Navbar";
 import { mockNotifications } from "../data/mockNotifications";
 import "../App.css";
 
@@ -19,7 +19,7 @@ function Notifications() {
 
   return (
     <div className="page">
-      <Navbar user={{
+      {/*<Navbar user={{
         id: "",
         username: "",
         email: "",
@@ -27,7 +27,7 @@ function Notifications() {
         token: undefined
       }} onLogout={function (): void {
         throw new Error("Function not implemented.");
-      } } />
+      } } />*/}
 
       <h1 className="page-title">{content.notifications.title}</h1>
       <h2 className="page-subtitle">{content.notifications.subtitle}</h2>

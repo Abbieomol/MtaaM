@@ -1,15 +1,31 @@
 import React, { useState, useContext, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { createPost } from "../services/api";
 import { LanguageContext } from "../context/LanguageContext";
 import "../styles/App.css";
 
+
+function getErrorMessage(err: unknown): string {
+  if (axios.isAxiosError(err)) {
+    return err.response?.data?.detail || "Request failed";
+  }
+
+  if (err instanceof Error) {
+    return err.message;
+  }
+
+  return "An unknown error occurred";
+}
+
 const CreatePost: React.FC = () => {
   const { translate } = useContext(LanguageContext);
+
   const [caption, setCaption] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+
   const navigate = useNavigate();
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,15 +46,21 @@ const CreatePost: React.FC = () => {
 
     const formData = new FormData();
     formData.append("caption", caption);
-    if (imageFile) formData.append("image", imageFile);
+
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
 
     try {
-      await createPost(formData); // Axios request in api.ts
-      navigate("/dashboard"); // redirect after success
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
+      await createPost(formData);
+
+      setCaption("");
+      setImageFile(null);
+
+      navigate("/dashboard");
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.response?.data?.detail || translate("Failed to create post."));
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -51,6 +73,7 @@ const CreatePost: React.FC = () => {
   return (
     <div className="create-post-form">
       <h2>{translate("Create Post")}</h2>
+
       {error && <p className="error">{error}</p>}
 
       <textarea

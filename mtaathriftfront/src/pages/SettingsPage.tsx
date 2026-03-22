@@ -1,4 +1,4 @@
-import Navbar from "../components/Navbar";
+//import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
 import type { User } from "../types/types";
@@ -23,7 +23,7 @@ type Settings = {
   language: "en" | "fr" | "es" | "swahili" | "arabic";
 };
 
-export default function SettingsPage({ user, onLogout }: Props) {
+export default function SettingsPage({ user }: Props) {
   
   const [settings, setSettings] = useState<Settings>(() => {
     const saved = localStorage.getItem(`settings-${user.username}`);
@@ -79,7 +79,7 @@ export default function SettingsPage({ user, onLogout }: Props) {
 
   return (
     <div className="settings-page">
-      <Navbar user={user} onLogout={onLogout} />
+      {/* <Navbar user={user} onLogout={onLogout} /> */}
 
       <div className="settings-wrapper">
         <Sidebar />

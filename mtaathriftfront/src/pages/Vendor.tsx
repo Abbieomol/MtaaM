@@ -1,7 +1,7 @@
 import content from "../content";
 import Card from "../components/Card";
 import Button from "../components/Button";
-import Navbar from "../components/Navbar";
+//import Navbar from "../components/Navbar";
 import type { User } from "../types/types";
 import "../App.css";
 
@@ -10,10 +10,11 @@ type Props = {
   onLogout: () => void;
 };
 
-function Vendor({ user, onLogout }: Props) {
+// eslint-disable-next-line no-empty-pattern
+function Vendor({  }: Props) {
   return (
     <div className="page">
-      <Navbar user={user} onLogout={onLogout} />
+      {/*<Navbar user={user} onLogout={onLogout} />*/}
 
       <h1 className="page-title">{content.vendor.title}</h1>
       <h2 className="page-subtitle">{content.vendor.subtitle}</h2>

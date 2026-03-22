@@ -74,6 +74,7 @@ const Login: React.FC = () => {
         <input
           id="email"
           type="email"
+          autoComplete="email"
           placeholder={translate("Email Address")}
           className="form-input"
           value={email}
@@ -85,6 +86,7 @@ const Login: React.FC = () => {
         <input
           id="password"
           type="password"
+          autoComplete="current-password"
           placeholder={translate("Password")}
           className="form-input"
           value={password}
