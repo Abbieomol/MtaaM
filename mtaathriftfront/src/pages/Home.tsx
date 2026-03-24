@@ -1,14 +1,13 @@
 import { useEffect, useState, useContext } from "react";
 import content from "../content";
 import Card from "../components/Card";
-//import Navbar from "../components/Navbar";
 import { LanguageContext } from "../context/LanguageContext";
 import { fetchProducts } from "../services/api";
 import "../App.css";
 
 interface Product {
-  id: string;
-  title: string;
+  id: number;
+  name: string;
   description: string;
   image?: string;
   price?: number;
@@ -25,7 +24,6 @@ const Home: React.FC = () => {
 
   const [, setRole] = useState<UserRole>("customer");
 
-  
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
@@ -40,12 +38,11 @@ const Home: React.FC = () => {
     }
   }, []);
 
-  
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const data = await fetchProducts();
-        setProducts(data);
+        const res = await fetchProducts();
+        setProducts(res.data);
       } catch (err) {
         console.error(err);
         setError("Failed to load products");
@@ -59,14 +56,10 @@ const Home: React.FC = () => {
 
   return (
     <div className="page">
-      {/*<Navbar />/*}
-
-      {/* Page header */}
       <h1 className="page-title">{translate(content.home.title)}</h1>
       <h2 className="page-subtitle">{translate(content.home.subtitle)}</h2>
       <p className="page-description">{translate(content.home.description)}</p>
 
-      {/* Categories */}
       <div className="card-grid">
         {content.home.categories.map((cat, idx) => (
           <Card
@@ -77,23 +70,22 @@ const Home: React.FC = () => {
         ))}
       </div>
 
-      {/* Products from backend */}
       <div className="card-grid">
         {loading && <p>Loading products...</p>}
         {error && <p>{error}</p>}
+
         {!loading &&
           !error &&
           products.map((product) => (
             <Card
               key={product.id}
-              title={translate(product.title)}
+              title={translate(product.name)}
               description={translate(product.description)}
-              //image={product.image}
+              productId={product.id}
             />
           ))}
       </div>
 
-      {/* Promo cards */}
       <div className="card-grid">
         {content.home.promoCards.map((card, idx) => (
           <Card

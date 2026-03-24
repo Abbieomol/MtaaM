@@ -27,7 +27,6 @@ function Navbar({ user, onLogout }: NavbarProps) {
   return (
     <>
       <nav className="navbar">
-        {/* LEFT */}
         <button
           className="menu-btn"
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -37,38 +36,59 @@ function Navbar({ user, onLogout }: NavbarProps) {
 
         <h2 className="navbar-title">MtaaThrifting</h2>
 
-        {/* CENTER ICONS */}
         <div className="navbar-icons">
           <Link to="/" title={translate("Home")}>
             <FaHome />
           </Link>
 
-          <Link to="/customer" title={translate("Customer")}>
-            <FaUser />
-          </Link>
+          {!user && (
+            <>
+              <Link to="/login" title={translate("Login")}>
+                <FaUser />
+              </Link>
+              <Link to="/signup" title={translate("Signup")}>
+                <FaUser />
+              </Link>
+            </>
+          )}
 
-          <Link to="/notifications" title={translate("Notifications")}>
-            <FaBell />
-          </Link>
+          {user?.role === "customer" && (
+            <>
+              <Link to="/search" title={translate("Search")}>
+                <FaSearch />
+              </Link>
 
-          <Link to="/search" title={translate("Search")}>
-            <FaSearch />
-          </Link>
+              <Link to="/notifications" title={translate("Notifications")}>
+                <FaBell />
+              </Link>
 
-          <Link to="/wishlist" title="Wishlist">
-            <FaHeart />
-          </Link>
+              <Link to="/wishlist" title="Wishlist">
+                <FaHeart />
+              </Link>
 
-          <Link to="/cart" title="Cart">
-            <FaShoppingCart />
-          </Link>
+              <Link to="/cart" title="Cart">
+                <FaShoppingCart />
+              </Link>
+            </>
+          )}
 
-          <Link to="/vendor" title={translate("Vendor")}>
-            <FaStore />
-          </Link>
+          {user?.role === "vendor" && (
+            <>
+              <Link to="/vendor" title={translate("Dashboard")}>
+                <FaStore />
+              </Link>
+
+              <Link to="/vendor/add-product" title="Add Product">
+                <FaStore />
+              </Link>
+
+              <Link to="/notifications" title={translate("Notifications")}>
+                <FaBell />
+              </Link>
+            </>
+          )}
         </div>
 
-        {/* RIGHT */}
         <div className="navbar-right">
           {user && (
             <span className="navbar-user">
@@ -97,38 +117,56 @@ function Navbar({ user, onLogout }: NavbarProps) {
             {translate("Home")}
           </Link>
 
-          <Link to="/customer" onClick={() => setSidebarOpen(false)}>
-            {translate("Customer")}
-          </Link>
-
-          <Link to="/notifications" onClick={() => setSidebarOpen(false)}>
-            {translate("Notifications")}
-          </Link>
-
-          <Link to="/search" onClick={() => setSidebarOpen(false)}>
-            {translate("Search")}
-          </Link>
-
-          <Link to="/wishlist" onClick={() => setSidebarOpen(false)}>
-            Wishlist
-          </Link>
-
-          <Link to="/cart" onClick={() => setSidebarOpen(false)}>
-            Cart
-          </Link>
-
-          <Link to="/vendor" onClick={() => setSidebarOpen(false)}>
-            {translate("Vendor")}
-          </Link>
-
           {!user && (
             <>
+              <Link to="/login" onClick={() => setSidebarOpen(false)}>
+                {translate("Login")}
+              </Link>
+
               <Link to="/signup" onClick={() => setSidebarOpen(false)}>
                 {translate("Signup")}
               </Link>
+            </>
+          )}
 
-              <Link to="/login" onClick={() => setSidebarOpen(false)}>
-                {translate("Login")}
+          {user?.role === "customer" && (
+            <>
+              <Link to="/search" onClick={() => setSidebarOpen(false)}>
+                {translate("Search")}
+              </Link>
+
+              <Link to="/wishlist" onClick={() => setSidebarOpen(false)}>
+                Wishlist
+              </Link>
+
+              <Link to="/cart" onClick={() => setSidebarOpen(false)}>
+                Cart
+              </Link>
+
+              <Link to="/notifications" onClick={() => setSidebarOpen(false)}>
+                {translate("Notifications")}
+              </Link>
+            </>
+          )}
+
+          {user?.role === "vendor" && (
+            <>
+              <Link to="/vendor" onClick={() => setSidebarOpen(false)}>
+                {translate("Dashboard")}
+              </Link>
+
+              <Link
+                to="/vendor/add-product"
+                onClick={() => setSidebarOpen(false)}
+              >
+                Add Product
+              </Link>
+
+              <Link
+                to="/notifications"
+                onClick={() => setSidebarOpen(false)}
+              >
+                {translate("Notifications")}
               </Link>
             </>
           )}

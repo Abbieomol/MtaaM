@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { LanguageProvider } from "./context/LanguageContext";
-
 import Home from "./pages/Home";
 import Customer from "./pages/Customer";
 import Vendor from "./pages/Vendor";
@@ -9,11 +8,14 @@ import Search from "./pages/Search";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Notifications from "./pages/Notifications";
+import Wishlist from "./pages/Wishlist";
+import Cart from "./pages/Cart";
 import type { User } from "./types/types";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-
 
 function App() {
   const storedUser = localStorage.getItem("user");
@@ -29,18 +31,17 @@ function App() {
     <LanguageProvider>
       <BrowserRouter>
         <Navbar user={user} onLogout={handleLogout} />
+        <ToastContainer position="top-right" autoClose={3000} />
 
         <Routes>
-          
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
 
-       
           <Route
             path="/search"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["customer", "vendor"]}>
                 <Search user={user!} onLogout={handleLogout} />
               </ProtectedRoute>
             }
@@ -49,13 +50,30 @@ function App() {
           <Route
             path="/notifications"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["customer", "vendor"]}>
                 <Notifications />
               </ProtectedRoute>
             }
           />
 
-     
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute allowedRoles={["customer"]}>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute allowedRoles={["customer"]}>
+                <Wishlist />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/customer"
             element={

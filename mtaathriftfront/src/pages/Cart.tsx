@@ -5,56 +5,74 @@ const Cart: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [cart, setCart] = useState<any[]>([]);
 
-  const loadCart = async () => {
-    const data = await getCart();
-    setCart(data);
-  };
-
-  useEffect(() => {
   const fetchCart = async () => {
     try {
       const res = await getCart();
       setCart(res.data);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch cart:", err);
     }
   };
 
-  fetchCart();
+  useEffect(() => {
+
+  const fetchData = async () => {
+    try {
+      const res = await getCart();
+      setCart(res.data); 
+    } catch (err) {
+      console.error("Failed to fetch cart:", err);
+    }
+  };
+
+  fetchData();
 }, []);
 
   const handleRemove = async (id: number) => {
-    await removeCartItem(id);
-    loadCart();
+    try {
+      await removeCartItem(id);
+      fetchCart();
+    } catch (err) {
+      console.error("Failed to remove item:", err);
+    }
   };
 
   const handleUpdate = async (id: number, qty: number) => {
-    await updateCartItem(id, qty);
-    loadCart();
+    try {
+      await updateCartItem(id, qty);
+      fetchCart();
+    } catch (err) {
+      console.error("Failed to update item:", err);
+    }
   };
 
   return (
     <div className="page">
       <h1>My Cart</h1>
 
-      {cart.map((item) => (
-        <div key={item.id} className="card">
-          <h3>{item.product}</h3>
-          <p>Price: {item.price}</p>
+      {cart.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        cart.map((item) => (
+          <div key={item.id} className="card">
+            <h3>{item.product}</h3>
+            <p>Price: {item.price}</p>
 
-          <input
-            type="number"
-            value={item.quantity}
-            onChange={(e) =>
-              handleUpdate(item.id, Number(e.target.value))
-            }
-          />
+            <input
+              type="number"
+              min={1}
+              value={item.quantity}
+              onChange={(e) =>
+                handleUpdate(item.id, Number(e.target.value))
+              }
+            />
 
-          <button onClick={() => handleRemove(item.id)}>
-            Remove
-          </button>
-        </div>
-      ))}
+            <button onClick={() => handleRemove(item.id)}>
+              Remove
+            </button>
+          </div>
+        ))
+      )}
     </div>
   );
 };

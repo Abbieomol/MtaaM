@@ -52,15 +52,29 @@ export const createPost = async (data: FormData) => {
     },
   });
 };
+export const fetchCart = async () => {
+  const res = await fetch(`$/cart/add`, {
+    method: "GET",
+    credentials: "include",
+  });
+  return res.json();
+};
 
-export const addToCart = async (product_id: number) => {
-  const res = await fetch(`$/cart/add/`, {
+export const fetchNotifications = async () => {
+  const res = await fetch(`$/notifications/`, {
+    method: "GET",
+    credentials: "include",
+  });
+  return res.json();
+};
+export const addToCart = async (product_id: number, quantity: number = 1) => {
+  const res = await fetch(`/cart/add/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify({ product_id }),
+    body: JSON.stringify({ product_id, quantity }),
   });
 
   return res.json();
@@ -124,5 +138,8 @@ export const removeWishlistItem = async (item_id: number) => {
   });
 
   return res.json();
+};
+export const getProducts = async () => {
+  return await axios.get("/products/");
 };
 export default API;
