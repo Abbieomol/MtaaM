@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getWishlist, removeWishlistItem } from "../services/api";
 
 const Wishlist: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [wishlist, setWishlist] = useState<any[]>([]);
 
   const loadWishlist = async () => {
@@ -10,9 +11,17 @@ const Wishlist: React.FC = () => {
   };
 
   useEffect(() => {
-    loadWishlist();
-  }, []);
+  const fetchWishlist = async () => {
+    try {
+      const res = await getWishlist();
+      setWishlist(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
+  fetchWishlist();
+}, []);
   const handleRemove = async (id: number) => {
     await removeWishlistItem(id);
     loadWishlist();

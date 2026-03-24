@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState, useContext } from "react";
 import type { User } from "../types/types";
 import { LanguageContext } from "../context/LanguageContext";
@@ -15,30 +15,14 @@ import {
 } from "react-icons/fa";
 import "../App.css";
 
-function Navbar() {
+type NavbarProps = {
+  user: User | null;
+  onLogout: () => void;
+};
+
+function Navbar({ user, onLogout }: NavbarProps) {
   const { translate } = useContext(LanguageContext);
-  const navigate = useNavigate();
-
-  const [user, setUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        return JSON.parse(storedUser);
-      } catch {
-        console.error("Invalid user data in localStorage");
-      }
-    }
-    return null;
-  });
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    navigate("/login");
-  };
 
   return (
     <>
@@ -53,7 +37,7 @@ function Navbar() {
 
         <h2 className="navbar-title">MtaaThrifting</h2>
 
-        
+        {/* CENTER ICONS */}
         <div className="navbar-icons">
           <Link to="/" title={translate("Home")}>
             <FaHome />
@@ -95,7 +79,7 @@ function Navbar() {
           {user && (
             <button
               className="logout-btn"
-              onClick={handleLogout}
+              onClick={onLogout}
               title="Logout"
             >
               <FaSignOutAlt />
@@ -154,7 +138,7 @@ function Navbar() {
               className="logout-btn"
               onClick={() => {
                 setSidebarOpen(false);
-                handleLogout();
+                onLogout();
               }}
             >
               Logout

@@ -9,7 +9,7 @@ import Search from "./pages/Search";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Notifications from "./pages/Notifications";
-
+import type { User } from "./types/types";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 import "./App.css";
@@ -17,7 +17,7 @@ import "./App.css";
 
 function App() {
   const storedUser = localStorage.getItem("user");
-  const user: user | null = storedUser ? JSON.parse(storedUser) : null;
+  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
 
   const handleLogout = () => {
     localStorage.removeItem("token");

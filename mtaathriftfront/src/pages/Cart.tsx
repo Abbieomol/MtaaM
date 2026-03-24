@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getCart, removeCartItem, updateCartItem } from "../services/api";
 
 const Cart: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [cart, setCart] = useState<any[]>([]);
 
   const loadCart = async () => {
@@ -10,8 +11,17 @@ const Cart: React.FC = () => {
   };
 
   useEffect(() => {
-    loadCart();
-  }, []);
+  const fetchCart = async () => {
+    try {
+      const res = await getCart();
+      setCart(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchCart();
+}, []);
 
   const handleRemove = async (id: number) => {
     await removeCartItem(id);
