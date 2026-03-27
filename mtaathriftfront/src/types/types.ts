@@ -49,6 +49,7 @@ export interface Product {
 export interface CartItem {
   id: number;
   product: Product;
+  price: number;
   quantity: number;
 }
 

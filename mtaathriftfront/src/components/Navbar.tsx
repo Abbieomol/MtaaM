@@ -46,6 +46,7 @@ function Navbar({ user, onLogout }: NavbarProps) {
               <Link to="/login" title={translate("Login")}>
                 <FaUser />
               </Link>
+
               <Link to="/signup" title={translate("Signup")}>
                 <FaUser />
               </Link>
@@ -91,26 +92,26 @@ function Navbar({ user, onLogout }: NavbarProps) {
 
         <div className="navbar-right">
           {user && (
-            <span className="navbar-user">
-              {user.username || user.email}
-            </span>
-          )}
+            <>
+              <span className="navbar-user">
+                {user.username || user.email}
+              </span>
 
-          {user && (
-            <button
-              className="logout-btn"
-              onClick={onLogout}
-              title="Logout"
-            >
-              <FaSignOutAlt />
-            </button>
+              <button
+                className="logout-btn"
+                onClick={onLogout}
+                title="Logout"
+              >
+                <FaSignOutAlt />
+              </button>
+            </>
           )}
 
           <LanguageSwitcher />
         </div>
       </nav>
 
-      {/* SIDEBAR */}
+      {/* Sidebar */}
       {sidebarOpen && (
         <div className="sidebar">
           <Link to="/" onClick={() => setSidebarOpen(false)}>
@@ -123,7 +124,7 @@ function Navbar({ user, onLogout }: NavbarProps) {
                 {translate("Login")}
               </Link>
 
-              <Link to="auth/signup" onClick={() => setSidebarOpen(false)}>
+              <Link to="/signup" onClick={() => setSidebarOpen(false)}>
                 {translate("Signup")}
               </Link>
             </>

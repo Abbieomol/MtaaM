@@ -19,14 +19,10 @@ function Signup() {
 
   const navigate = useNavigate();
 
-  const isValidEmail = (email: string) =>
-    /\S+@\S+\.\S+/.test(email);
-
+  const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
   const isStrongPassword = (password: string) =>
     /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,}$/.test(password);
-
-  const hasTwoNames = (name: string) =>
-    name.trim().split(" ").length >= 2;
+  const hasTwoNames = (name: string) => name.trim().split(" ").length >= 2;
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,23 +51,18 @@ function Signup() {
     }
 
     try {
-      const formData = new FormData();
-      formData.append("fullName", fullName);
-      formData.append("email", email);
-      formData.append("password", password);
-      formData.append("role", role);
+      // Convert to plain object for API
+      const data: { fullName: string; email: string; password: string; role: string } = {
+        fullName,
+        email,
+        password,
+        role,
+      };
 
-      if (role === "vendor") {
-        formData.append("idDocument", idDocument as File);
-        formData.append("selfie", selfie as File);
-      }
+      const res = await signup(data); // now matches updated api.ts
 
-      
-      const res = await signup(formData);
-
-      console.log(res.data);
+      console.log(res);
       alert("Signup successful. Please log in.");
-
       navigate("/login");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
