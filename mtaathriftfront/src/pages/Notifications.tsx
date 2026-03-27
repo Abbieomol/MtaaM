@@ -17,17 +17,7 @@ function Notifications() {
       )
     : [];
 
-  return (
-    <div className="page">
-      {/*<Navbar user={{
-        id: "",
-        username: "",
-        email: "",
-        role: "customer",
-        token: undefined
-      }} onLogout={function (): void {
-        throw new Error("Function not implemented.");
-      } } />*/}
+  
 
       <h1 className="page-title">{content.notifications.title}</h1>
       <h2 className="page-subtitle">{content.notifications.subtitle}</h2>

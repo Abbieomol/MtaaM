@@ -12,7 +12,7 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username}'s Cart"
+        return f"{self.user.email}'s Cart"
 
 
 class CartItem(models.Model):
@@ -53,4 +53,4 @@ class WishlistItem(models.Model):
         unique_together = ('user', 'product')
 
     def __str__(self):
-        return f"{self.product.name} in {self.user.username}'s Wishlist"
+        return f"{self.product.name} in {self.user.email}'s Wishlist"

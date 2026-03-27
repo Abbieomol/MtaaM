@@ -11,7 +11,7 @@ class SignupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password2', 'role']
+        fields = ['email', 'email', 'password', 'password2', 'role']
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -35,7 +35,7 @@ class LoginSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if email and password:
-            user = authenticate(username=email, password=password)
+            user = authenticate(email=email, password=password)
             if not user:
                 raise serializers.ValidationError("Invalid email or password")
         else:

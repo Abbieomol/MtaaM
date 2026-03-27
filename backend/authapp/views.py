@@ -23,7 +23,7 @@ class SignupView(APIView):
             return Response({
                 "user": {
                     "id": user.id,
-                    "username": user.username,
+                    "email": user.email,
                     "email": user.email,
                     "role": user.role
                 },
@@ -40,7 +40,7 @@ class LoginView(APIView):
             return Response({
                 "user": {
                     "id": user.id,
-                    "username": user.username,
+                    "email": user.email,
                     "email": user.email,
                     "role": user.role
                 },

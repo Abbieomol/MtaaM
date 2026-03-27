@@ -4,12 +4,12 @@ import { LanguageContext } from "../context/LanguageContext";
 import "../styles/App.css";
 
 interface FollowButtonProps {
-  targetUsername: string;
+  targetemail: string;
 }
 
 const API_URL = "http://localhost:5000"; // your backend URL
 
-const FollowButton: React.FC<FollowButtonProps> = ({ targetUsername }) => {
+const FollowButton: React.FC<FollowButtonProps> = ({ targetemail }) => {
   const { translate } = useContext(LanguageContext);
   const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -20,7 +20,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ targetUsername }) => {
     const token = localStorage.getItem("token");
     const fetchStatus = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/follow-status/${targetUsername}/`, {
+        const res = await axios.get(`${API_URL}/api/follow-status/${targetemail}/`, {
           headers: { Authorization: `Token ${token}` },
         });
         setIsFollowing(res.data.is_following);
@@ -32,14 +32,14 @@ const FollowButton: React.FC<FollowButtonProps> = ({ targetUsername }) => {
       }
     };
     fetchStatus();
-  }, [targetUsername]);
+  }, [targetemail]);
 
   // Toggle follow/unfollow
   const toggleFollow = async () => {
     const token = localStorage.getItem("token");
     try {
       const res = await axios.post(
-        `${API_URL}/api/toggle-follow/${targetUsername}/`,
+        `${API_URL}/api/toggle-follow/${targetemail}/`,
         {},
         { headers: { Authorization: `Token ${token}` } }
       );

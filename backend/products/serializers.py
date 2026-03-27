@@ -12,7 +12,7 @@ class Wishlist(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username}'s Wishlist"
+        return f"{self.user.email}'s Wishlist"
 
 
 class WishlistItem(models.Model):

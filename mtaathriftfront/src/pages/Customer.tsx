@@ -49,7 +49,7 @@ function Customer() {
       {/* Optional greeting */}
       {user && (
         <p className="page-description">
-          Welcome, {user.username || user.email}
+          Welcome, {user.email || user.email}
         </p>
       )}
 

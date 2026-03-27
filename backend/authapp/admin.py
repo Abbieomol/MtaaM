@@ -5,14 +5,14 @@ from .models import Profile, Product, Cart, CartItem, Order, OrderItem, Wishlist
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'role', 'phone')
-    search_fields = ('user__username', 'user__email')
+    search_fields = ('user__email', 'user__email')
     list_filter = ('role',)
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'vendor', 'price', 'created_at')
-    search_fields = ('name', 'vendor__user__username')
+    search_fields = ('name', 'vendor__user__email')
     list_filter = ('created_at',)
 
 

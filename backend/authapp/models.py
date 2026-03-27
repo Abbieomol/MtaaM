@@ -17,7 +17,7 @@ class Profile(models.Model):
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return self.user.email
     
 class Product(models.Model):
     vendor = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -35,7 +35,7 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Cart of {self.user.user.username}"
+        return f"Cart of {self.user.user.email}"
 
 
 class CartItem(models.Model):
@@ -60,7 +60,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Order {self.id} - {self.user.user.username}"
+        return f"Order {self.id} - {self.user.user.email}"
 
 
 class OrderItem(models.Model):
@@ -77,7 +77,7 @@ class Wishlist(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Wishlist of {self.user.user.username}"
+        return f"Wishlist of {self.user.user.email}"
 
 
 class WishlistItem(models.Model):

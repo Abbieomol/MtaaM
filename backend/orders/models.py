@@ -10,7 +10,7 @@ class Order(models.Model):
     is_paid = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Order {self.id} - {self.user.username}"
+        return f"Order {self.id} - {self.user.email}"
 
 
 class OrderItem(models.Model):
