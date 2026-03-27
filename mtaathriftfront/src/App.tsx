@@ -18,8 +18,17 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
 function App() {
-  const storedUser = localStorage.getItem("user");
-  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+  const getUserFromStorage = (): User | null => {
+    try {
+      const data = localStorage.getItem("user");
+      if (!data || data === "undefined") return null;
+      return JSON.parse(data);
+    } catch {
+      return null;
+    }
+  };
+
+  const user: User | null = getUserFromStorage();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -42,7 +51,7 @@ function App() {
             path="/search"
             element={
               <ProtectedRoute allowedRoles={["customer", "vendor"]}>
-                <Search user={user!} onLogout={handleLogout} />
+                <Search user={user as User} onLogout={handleLogout} />
               </ProtectedRoute>
             }
           />
@@ -87,7 +96,7 @@ function App() {
             path="/vendor"
             element={
               <ProtectedRoute allowedRoles={["vendor"]}>
-                <Vendor user={user!} onLogout={handleLogout} />
+                <Vendor user={user as User} onLogout={handleLogout} />
               </ProtectedRoute>
             }
           />

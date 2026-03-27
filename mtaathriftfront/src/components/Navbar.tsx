@@ -123,7 +123,7 @@ function Navbar({ user, onLogout }: NavbarProps) {
                 {translate("Login")}
               </Link>
 
-              <Link to="/signup" onClick={() => setSidebarOpen(false)}>
+              <Link to="auth/signup" onClick={() => setSidebarOpen(false)}>
                 {translate("Signup")}
               </Link>
             </>

@@ -3,14 +3,16 @@ import '../App.css';
 type ButtonProps = {
   label: string;
   onClick?: () => void;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 };
 
-function Button({ label, onClick }: ButtonProps) {
+const Button: React.FC<ButtonProps> = ({ label, onClick, type = "button", disabled }) => {
   return (
-    <button className="btn" onClick={onClick}>
+    <button type={type} onClick={onClick} disabled={disabled} className="btn">
       {label}
     </button>
   );
-}
+};
 
 export default Button;

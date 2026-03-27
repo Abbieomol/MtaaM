@@ -20,21 +20,11 @@ class SignupSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
-    role = serializers.CharField()
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        user = authenticate(
-            username=data['username'],
-            password=data['password']
-        )
-
-        if user is None:
-            raise serializers.ValidationError("Invalid credentials")
-
-        if user.role != data['role']:
-            raise serializers.ValidationError("User role mismatch")
-
-        data['user'] = user
-        return data
+        user = authenticate(email=data['email'], password=data['password'])
+        if user and user.is_active:
+            return {'user': user}
+        raise serializers.ValidationError("Invalid email or password")
