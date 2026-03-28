@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from .serializers import SignupSerializer, LoginSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -14,21 +15,29 @@ def get_tokens_for_user(user):
 
 
 class SignupView(APIView):
+    permission_classes = [AllowAny]  
+
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+
+    
             tokens = get_tokens_for_user(user)
-            return Response({
-                "user": {
-                    "id": user.id,
-                    "email": user.email,
-                    "email": user.email,
-                    "role": getattr(user, "role", "customer")
+
+            return Response(
+                {
+                    "user": {
+                        "id": user.id,
+                        "email": user.email,
+                        "role": getattr(user, "role", "customer"),
+                    },
+                    "token": tokens["access"],
+                    "refresh": tokens["refresh"],
                 },
-                "token": tokens["access"],
-                "refresh": tokens["refresh"]
-            }, status=status.HTTP_201_CREATED)
+                status=status.HTTP_201_CREATED,
+            )
+        # Return serializer errors if invalid
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

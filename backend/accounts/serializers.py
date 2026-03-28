@@ -12,7 +12,7 @@ class SignupSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(
             email=validated_data['email'],
-            email=validated_data.get('email'),
+            
             password=validated_data['password'],
             role=validated_data['role']
         )
