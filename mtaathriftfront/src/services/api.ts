@@ -1,10 +1,10 @@
 import axios from "axios";
 
 interface SignupData {
-  username: string;
+  username?: string; // optional if your backend allows
   email: string;
   password: string;
-  role: string;
+  role?: string; // default to "customer"
 }
 
 interface LoginData {
@@ -64,7 +64,15 @@ API.interceptors.response.use(
 
 // Auth
 export const signup = async (data: SignupData) => {
-  const res = await API.post("/auth/signup/", data);
+  const payload = {
+    email: data.email,
+    password: data.password,
+    role: data.role || "customer",
+    ...(data.username ? { username: data.username } : {}),
+  };
+
+  const res = await API.post("/auth/signup/", payload);
+
   // Save tokens if returned
   if (res.data.access && res.data.refresh) {
     localStorage.setItem("accessToken", res.data.access);
@@ -103,17 +111,27 @@ export const fetchCart = async () => {
 };
 
 export const addToCart = async (product_id: number, quantity = 1) => {
-  const res = await API.post("/cart/add/", { product_id, quantity }, { withCredentials: true });
+  const res = await API.post(
+    "/cart/add/",
+    { product_id, quantity },
+    { withCredentials: true }
+  );
   return res.data;
 };
 
 export const removeFromCart = async (item_id: string | number) => {
-  const res = await API.delete(`/cart/remove/${item_id}/`, { withCredentials: true });
+  const res = await API.delete(`/cart/remove/${item_id}/`, {
+    withCredentials: true,
+  });
   return res.data;
 };
 
 export const updateCartItem = async (item_id: number, quantity: number) => {
-  const res = await API.post("/cart/update/", { item_id, quantity }, { withCredentials: true });
+  const res = await API.post(
+    "/cart/update/",
+    { item_id, quantity },
+    { withCredentials: true }
+  );
   return res.data;
 };
 
@@ -124,7 +142,11 @@ export const checkoutCart = async () => {
 
 // Wishlist
 export const addToWishlist = async (product_id: number) => {
-  const res = await API.post("/wishlist/add/", { product_id }, { withCredentials: true });
+  const res = await API.post(
+    "/wishlist/add/",
+    { product_id },
+    { withCredentials: true }
+  );
   return res.data;
 };
 
@@ -134,7 +156,9 @@ export const getWishlist = async () => {
 };
 
 export const removeWishlistItem = async (item_id: number) => {
-  const res = await API.delete(`/wishlist/remove/${item_id}/`, { withCredentials: true });
+  const res = await API.delete(`/wishlist/remove/${item_id}/`, {
+    withCredentials: true,
+  });
   return res.data;
 };
 

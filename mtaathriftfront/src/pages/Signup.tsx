@@ -43,7 +43,7 @@ const Signup: React.FC = () => {
 
    try {
   const response = await signup({
-    username: formData.email, // Using email as username
+    username: formData.email, 
     email: formData.email,
     password: formData.password,
     role: formData.role,
