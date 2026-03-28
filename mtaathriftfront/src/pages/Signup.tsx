@@ -11,9 +11,10 @@ const Signup: React.FC = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+  
     email: "",
     password: "",
-    confirmPassword: "",
+    password2: "",
     role: "customer",
   });
   const [error, setError] = useState("");
@@ -33,19 +34,21 @@ const Signup: React.FC = () => {
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.password2) {
       setError("Passwords do not match.");
       return;
     }
 
     setLoading(true);
 
-    try {
-      const response = await signup({
-        email: formData.email,
-        password: formData.password,
-        
-      });
+   try {
+  const response = await signup({
+    username: formData.email, // Using email as username
+    email: formData.email,
+    password: formData.password,
+    role: formData.role,
+  });
+
 
       if (response.status === 201) {
         alert("Signup successful! Please log in.");
@@ -73,6 +76,9 @@ const Signup: React.FC = () => {
       <h1 className="page-title">{translate(content.signup.title)}</h1>
 
       <form className="login-form" onSubmit={handleSubmit}>
+       <label>Username</label>
+
+       
         <label>Email</label>
         <input
           type="email"
@@ -96,9 +102,9 @@ const Signup: React.FC = () => {
         <label>Confirm Password</label>
         <input
           type="password"
-          name="confirmPassword"
+          name="password2"
           placeholder={translate("Confirm Password")}
-          value={formData.confirmPassword}
+          value={formData.password2}
           onChange={handleChange}
           required
         />

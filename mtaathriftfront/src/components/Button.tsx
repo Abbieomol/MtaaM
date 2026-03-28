@@ -7,9 +7,14 @@ type ButtonProps = {
   disabled?: boolean;
 };
 
-const Button: React.FC<ButtonProps> = ({ label, onClick, type = "button", disabled }) => {
+const Button: React.FC<ButtonProps> = ({ label, onClick, type = "submit", disabled }) => {
   return (
-    <button type={type} onClick={onClick} disabled={disabled} className="btn">
+    <button
+      type={type}          
+      onClick={onClick}
+      disabled={disabled}
+      className="btn"
+    >
       {label}
     </button>
   );
