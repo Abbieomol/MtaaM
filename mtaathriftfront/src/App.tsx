@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { LanguageProvider } from "./context/LanguageContext";
 import Home from "./pages/Home";
 import Customer from "./pages/Customer";
 import Vendor from "./pages/Vendor";
@@ -31,78 +30,59 @@ function App() {
   const user: User | null = getUserFromStorage();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     window.location.href = "/login";
   };
 
   return (
-    <LanguageProvider>
-      <BrowserRouter>
-        <Navbar user={user} onLogout={handleLogout} />
-        <ToastContainer position="top-right" autoClose={3000} />
+    <BrowserRouter>
+      <Navbar user={user} onLogout={handleLogout} />
+      <ToastContainer position="top-right" autoClose={3000} />
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
 
-          <Route
-            path="/search"
-            element={
-              <ProtectedRoute allowedRoles={["customer", "vendor"]}>
-                <Search user={user as User} onLogout={handleLogout} />
-              </ProtectedRoute>
-            }
-          />
+        <Route path="/search" element={
+          <ProtectedRoute allowedRoles={["customer", "vendor"]}>
+            <Search />
+          </ProtectedRoute>
+        } />
 
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedRoute allowedRoles={["customer", "vendor"]}>
-                <Notifications />
-              </ProtectedRoute>
-            }
-          />
+        <Route path="/notifications" element={
+          <ProtectedRoute allowedRoles={["customer", "vendor"]}>
+            <Notifications />
+          </ProtectedRoute>
+        } />
 
-          <Route
-            path="/cart"
-            element={
-              <ProtectedRoute allowedRoles={["customer"]}>
-                <Cart />
-              </ProtectedRoute>
-            }
-          />
+        <Route path="/cart" element={
+          <ProtectedRoute allowedRoles={["customer"]}>
+            <Cart />
+          </ProtectedRoute>
+        } />
 
-          <Route
-            path="/wishlist"
-            element={
-              <ProtectedRoute allowedRoles={["customer"]}>
-                <Wishlist />
-              </ProtectedRoute>
-            }
-          />
+        <Route path="/wishlist" element={
+          <ProtectedRoute allowedRoles={["customer"]}>
+            <Wishlist />
+          </ProtectedRoute>
+        } />
 
-          <Route
-            path="/customer"
-            element={
-              <ProtectedRoute allowedRoles={["customer"]}>
-                <Customer />
-              </ProtectedRoute>
-            }
-          />
+        <Route path="/customer" element={
+          <ProtectedRoute allowedRoles={["customer"]}>
+            <Customer />
+          </ProtectedRoute>
+        } />
 
-          <Route
-            path="/vendor"
-            element={
-              <ProtectedRoute allowedRoles={["vendor"]}>
-                <Vendor user={user as User} onLogout={handleLogout} />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </LanguageProvider>
+        <Route path="/vendor" element={
+          <ProtectedRoute allowedRoles={["vendor"]}>
+            <Vendor />
+          </ProtectedRoute>
+        } />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

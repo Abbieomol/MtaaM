@@ -1,63 +1,58 @@
-import "../App.css";
 import { addToCart, addToWishlist } from "../services/api";
 import { toast } from "react-toastify";
+import { FiShoppingCart, FiHeart } from "react-icons/fi";
 
 type CardProps = {
   title: string;
   description: string;
+  price?: number;
+  image?: string;
   productId?: number;
+  showActions?: boolean;
 };
 
-function Card({ title, description, productId }: CardProps) {
-  const isLoggedIn = !!localStorage.getItem("token");
-
+const Card: React.FC<CardProps> = ({ title, description, price, image, productId, showActions = true }) => {
   const handleAddToCart = async () => {
     if (!productId) return;
-
-    if (!isLoggedIn) {
-      toast.info("Please login to add items to cart");
-      return;
-    }
-
     try {
-      await addToCart(productId, 1);
+      await addToCart(productId);
       toast.success("Added to cart");
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error("Failed to add to cart");
     }
   };
 
   const handleAddToWishlist = async () => {
     if (!productId) return;
-
-    if (!isLoggedIn) {
-      toast.info("Please login to add items to wishlist");
-      return;
-    }
-
     try {
       await addToWishlist(productId);
       toast.success("Added to wishlist");
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error("Failed to add to wishlist");
     }
   };
 
   return (
     <div className="card">
-      <h3>{title}</h3>
-      <p>{description}</p>
-
-      {productId && (
+      {image && <img src={image} alt={title} className="card-img" />}
+      {!image && <div className="card-img" style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: "0.85rem" }}>No image</div>}
+      <div className="card-body">
+        <h3 className="card-title">{title}</h3>
+        <p className="card-desc">{description}</p>
+        {price !== undefined && <div className="card-price">KSh {price.toLocaleString()}</div>}
+      </div>
+      {showActions && productId && (
         <div className="card-actions">
-          <button onClick={handleAddToCart}>Add to Cart</button>
-          <button onClick={handleAddToWishlist}>Wishlist</button>
+          <button className="btn btn-primary btn-sm" onClick={handleAddToCart}>
+            <FiShoppingCart size={14} /> Add to Cart
+          </button>
+          <button className="btn btn-outline btn-sm" onClick={handleAddToWishlist}>
+            <FiHeart size={14} />
+          </button>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default Card;

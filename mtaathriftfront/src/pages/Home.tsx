@@ -1,99 +1,85 @@
-import { useEffect, useState, useContext } from "react";
-import content from "../content";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Card from "../components/Card";
-import { LanguageContext } from "../context/LanguageContext";
 import { fetchProducts } from "../services/api";
-import "../App.css";
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  image?: string;
-  price?: number;
-}
-
-type UserRole = "customer" | "vendor";
+import type { Product } from "../types/types";
+import { FiArrowRight } from "react-icons/fi";
 
 const Home: React.FC = () => {
-  const { translate } = useContext(LanguageContext);
-
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-
-  const [, setRole] = useState<UserRole>("customer");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
+    const load = async () => {
       try {
-        const parsed = JSON.parse(user);
-        if (parsed.role) {
-          setRole(parsed.role);
-        }
-      } catch (e) {
-        console.error("Failed to parse user", e);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const res = await fetchProducts();
-        setProducts(res.data);
+        const data = await fetchProducts();
+        setProducts(data);
       } catch (err) {
         console.error(err);
-        setError("Failed to load products");
       } finally {
         setLoading(false);
       }
     };
-
-    getProducts();
+    load();
   }, []);
+
+  const categories = [
+    { icon: "👗", title: "Thrift Clothes", desc: "Tops, dresses, outerwear at great prices" },
+    { icon: "👟", title: "Shoes & Bags", desc: "Second-hand shoes, bags, and accessories" },
+    { icon: "🏪", title: "Local Vendors", desc: "Support sellers in your community" },
+    { icon: "♻️", title: "Sustainable", desc: "Eco-friendly fashion choices" },
+  ];
 
   return (
     <div className="page">
-      <h1 className="page-title">{translate(content.home.title)}</h1>
-      <h2 className="page-subtitle">{translate(content.home.subtitle)}</h2>
-      <p className="page-description">{translate(content.home.description)}</p>
-
-      <div className="card-grid">
-        {content.home.categories.map((cat, idx) => (
-          <Card
-            key={idx}
-            title={translate(cat.title)}
-            description={translate(cat.description)}
-          />
-        ))}
+      <div className="hero">
+        <h1>Karibu MtaaM</h1>
+        <p>
+          Your neighborhood thrift marketplace. Discover second-hand treasures, shop
+          affordable fashion, and support local sellers across Kenya.
+        </p>
+        <Link to="/search" className="hero-btn">
+          Start Shopping <FiArrowRight />
+        </Link>
       </div>
 
-      <div className="card-grid">
-        {loading && <p>Loading products...</p>}
-        {error && <p>{error}</p>}
-
-        {!loading &&
-          !error &&
-          products.map((product) => (
-            <Card
-              key={product.id}
-              title={translate(product.name)}
-              description={translate(product.description)}
-              productId={product.id}
-            />
+      <div className="section">
+        <h2 className="section-title">Browse Categories</h2>
+        <div className="category-grid">
+          {categories.map((cat, i) => (
+            <Link to="/search" key={i} className="category-card" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="cat-icon">{cat.icon}</div>
+              <h3>{cat.title}</h3>
+              <p>{cat.desc}</p>
+            </Link>
           ))}
+        </div>
       </div>
 
-      <div className="card-grid">
-        {content.home.promoCards.map((card, idx) => (
-          <Card
-            key={idx}
-            title={translate(card.title)}
-            description={translate(card.description)}
-          />
-        ))}
+      <div className="section">
+        <h2 className="section-title">Featured Products</h2>
+        {loading && <p className="text-muted">Loading products...</p>}
+        {!loading && products.length === 0 && (
+          <div className="empty-state">
+            <div className="icon">🛍️</div>
+            <h3>No products yet</h3>
+            <p>Check back soon for new thrift finds!</p>
+          </div>
+        )}
+        {!loading && products.length > 0 && (
+          <div className="card-grid">
+            {products.map((p) => (
+              <Card
+                key={p.id}
+                title={p.name}
+                description={p.description}
+                price={p.price}
+                image={p.image}
+                productId={p.id}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

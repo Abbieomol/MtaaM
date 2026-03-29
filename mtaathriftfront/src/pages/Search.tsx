@@ -1,118 +1,116 @@
-import { useState } from "react";
-import content from "../content";
+import { useState, useEffect } from "react";
 import Card from "../components/Card";
-import Button from "../components/Button";
-//import Navbar from "../components/Navbar";
-import type { User } from "../types/types";
-import { mockProducts } from "../data/mockProducts"; 
-import "../App.css";
+import { fetchProducts } from "../services/api";
+import type { Product } from "../types/types";
+import { FiSearch } from "react-icons/fi";
 
-type Props = {
-  user: User;
-  onLogout: () => void;
-};
+const categories = ["All", "Jackets", "Dresses", "Shoes", "Accessories"];
+const conditions = ["All", "New", "Like New", "Good", "Fair"];
 
-// eslint-disable-next-line no-empty-pattern
-function Search({  }: Props) {
+const Search: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
-  const [size, setSize] = useState("All");
-  const [price, setPrice] = useState("All");
-  const [condition, setCondition] = useState("All");
 
-  const handleSearch = () => {
-    console.log({ query, category, size, price, condition });
-  };
+  useEffect(() => {
+    fetchProducts()
+      .then(setProducts)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = products.filter((p) => {
+    const matchesQuery = !query || p.name.toLowerCase().includes(query.toLowerCase())
+      || p.description.toLowerCase().includes(query.toLowerCase());
+    return matchesQuery;
+  });
 
   return (
-    <div className="page">
-      {/*<Navbar user={user} onLogout={onLogout} /> */}
-
-      <h1 className="page-title">{content.search.title}</h1>
-      <h2 className="page-subtitle">{content.search.subtitle}</h2>
-      <p className="page-description">{content.search.description}</p>
-
-      {/* Search */}
-      <div className="search-bar">
-        <label htmlFor="searchQuery">Search</label>
-        <input
-          id="searchQuery"
-          type="text"
-          placeholder="Search thrift items..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="search-input"
-        />
-        <Button label="Search" onClick={handleSearch} />
+    <div className="page page-wide">
+      <div className="page-header">
+        <h1>Search Products</h1>
+        <p>Find thrift deals across all categories</p>
       </div>
 
-      {/* Filters */}
-      <div className="filters">
-        <div>
-          <label htmlFor="category">Category</label>
-          <select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            {content.search.categories.map((cat) => (
-              <option key={cat}>{cat}</option>
-            ))}
-          </select>
-        </div>
+      <div className="search-layout">
+        <aside className="search-sidebar">
+          <div className="panel">
+            <div className="filter-group">
+              <h4>Category</h4>
+              {categories.map((cat) => (
+                <label key={cat}>
+                  <input
+                    type="radio"
+                    name="category"
+                    checked={category === cat}
+                    onChange={() => setCategory(cat)}
+                  />
+                  {cat}
+                </label>
+              ))}
+            </div>
 
-        <div>
-          <label htmlFor="size">Size</label>
-          <select
-            id="size"
-            value={size}
-            onChange={(e) => setSize(e.target.value)}
-          >
-            {content.search.sizes.map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
-        </div>
+            <div style={{ height: 1, background: "var(--border)", margin: "12px 0" }} />
 
-        <div>
-          <label htmlFor="price">Price</label>
-          <select
-            id="price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          >
-            {content.search.prices.map((p) => (
-              <option key={p}>{p}</option>
-            ))}
-          </select>
-        </div>
+            <div className="filter-group">
+              <h4>Condition</h4>
+              {conditions.map((cond) => (
+                <label key={cond}>
+                  <input type="checkbox" />
+                  {cond}
+                </label>
+              ))}
+            </div>
+          </div>
+        </aside>
 
-        <div>
-          <label htmlFor="condition">Condition</label>
-          <select
-            id="condition"
-            value={condition}
-            onChange={(e) => setCondition(e.target.value)}
-          >
-            {content.search.conditions.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        </div>
-      </div>
+        <div className="search-main">
+          <div className="search-bar">
+            <div style={{ position: "relative", flex: 1 }}>
+              <FiSearch size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
+              <input
+                className="form-input"
+                placeholder="Search products..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                style={{ paddingLeft: 36, width: "100%" }}
+              />
+            </div>
+          </div>
 
- 
-      <div className="card-grid">
-        {mockProducts.map((product) => (
-          <Card
-            key={product.id}
-            title={product.title}
-            description={`${product.size} • $${product.price} • ${product.condition}`}
-          />
-        ))}
+          <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: 16 }}>
+            {filtered.length} product{filtered.length !== 1 ? "s" : ""} found
+          </p>
+
+          {loading && <p className="text-muted">Loading...</p>}
+
+          {!loading && filtered.length === 0 && (
+            <div className="empty-state">
+              <div className="icon">🔍</div>
+              <h3>No products found</h3>
+              <p>Try adjusting your search or filters</p>
+            </div>
+          )}
+
+          {!loading && filtered.length > 0 && (
+            <div className="card-grid">
+              {filtered.map((p) => (
+                <Card
+                  key={p.id}
+                  title={p.name}
+                  description={p.description}
+                  price={p.price}
+                  image={p.image}
+                  productId={p.id}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Search;

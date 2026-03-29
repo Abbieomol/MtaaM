@@ -1,13 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
 import { LanguageContext } from "../context/LanguageContext";
-import "../styles/App.css";
+import { getFollowStatus, toggleFollow } from "../services/api";
 
 interface FollowButtonProps {
   targetemail: string;
 }
-
-const API_URL = "http://localhost:5000"; // your backend URL
 
 const FollowButton: React.FC<FollowButtonProps> = ({ targetemail }) => {
   const { translate } = useContext(LanguageContext);
@@ -15,15 +12,11 @@ const FollowButton: React.FC<FollowButtonProps> = ({ targetemail }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  // Fetch follow status
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const fetchStatus = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/follow-status/${targetemail}/`, {
-          headers: { Authorization: `Token ${token}` },
-        });
-        setIsFollowing(res.data.is_following);
+        const data = await getFollowStatus(targetemail);
+        setIsFollowing(data.is_following);
       } catch (err) {
         console.error(err);
         setError("Failed to load follow status");
@@ -34,16 +27,10 @@ const FollowButton: React.FC<FollowButtonProps> = ({ targetemail }) => {
     fetchStatus();
   }, [targetemail]);
 
-  // Toggle follow/unfollow
-  const toggleFollow = async () => {
-    const token = localStorage.getItem("token");
+  const handleToggleFollow = async () => {
     try {
-      const res = await axios.post(
-        `${API_URL}/api/toggle-follow/${targetemail}/`,
-        {},
-        { headers: { Authorization: `Token ${token}` } }
-      );
-      setIsFollowing(res.data.is_following);
+      const data = await toggleFollow(targetemail);
+      setIsFollowing(data.is_following);
     } catch (err) {
       console.error(err);
       setError("Action failed");
@@ -56,7 +43,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ targetemail }) => {
   return (
     <button
       className={`follow-btn ${isFollowing ? "unfollow" : "follow"}`}
-      onClick={toggleFollow}
+      onClick={handleToggleFollow}
     >
       {isFollowing ? translate("Unfollow") : translate("Follow")}
     </button>

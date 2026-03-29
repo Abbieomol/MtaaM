@@ -1,20 +1,23 @@
 export type User = {
-  id: string;
-  username: string;
+  id: number;
   email: string;
   role: "customer" | "vendor";
-  token?: string; 
+  first_name?: string;
+  last_name?: string;
+  location?: string;
 };
 
 export type AuthResponse = {
   user: User;
   token: string;
+  refresh: string;
 };
 
 export type SignupPayload = {
-  fullName: string;
   email: string;
   password: string;
+  password2: string;
+  role?: string;
 };
 
 export type LoginPayload = {
@@ -26,10 +29,8 @@ export type ApiError = {
   message: string;
   errors?: Record<string, string[]>;
 };
-export type NotificationCategory =
-  | "Orders"
-  | "Offers"
-  | "Messages";
+
+export type NotificationCategory = "Orders" | "Offers" | "Messages";
 
 export type Notification = {
   id: number;
@@ -40,31 +41,32 @@ export type Notification = {
 
 export interface Product {
   id: number;
+  vendor: number;
   name: string;
   description: string;
   price: number;
+  stock: number;
   image?: string;
+  created_at: string;
 }
 
 export interface CartItem {
   id: number;
-  product: Product;
+  product: string;
   price: number;
   quantity: number;
 }
 
-export interface Cart {
-  id: number;
-  user: number;
-  items: CartItem[];
-}
 export interface WishlistItem {
   id: number;
-  product: Product;
+  product: string;
+  price: number;
 }
 
-export interface Wishlist {
+export interface Todo {
   id: number;
   user: number;
-  items: WishlistItem[];
+  title: string;
+  completed: boolean;
+  created_at: string;
 }

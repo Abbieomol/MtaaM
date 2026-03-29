@@ -1,23 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import content from "../content";
-import Button from "../components/Button";
-import { LanguageContext } from "../context/LanguageContext";
 import { login } from "../services/api";
-import "../App.css";
-
-interface ApiErrorResponse {
-  response?: {
-    data?: {
-      detail?: string;
-    };
-  };
-}
 
 const Login: React.FC = () => {
-  const { translate } = useContext(LanguageContext);
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,79 +11,70 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login button clicked!"); 
     setLoading(true);
     setError("");
 
     try {
       const response = await login({ email, password });
       const data = response.data;
-
-      // Save token and user info
-      if (data.token) localStorage.setItem("token", data.token);
-      if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
-
-      // Redirect based on role
       if (data.user?.role === "vendor") {
         navigate("/vendor");
       } else {
         navigate("/customer");
       }
     } catch (err: unknown) {
-      console.error(err);
-      const errorMessage = err instanceof Error && 'response' in err 
-        ? (err as ApiErrorResponse).response?.data?.detail 
-        : err instanceof Error 
-        ? err.message 
-        : "Login failed. Check your credentials.";
-      setError(errorMessage || "Login failed. Check your credentials.");
+      const apiErr = err as { response?: { data?: { non_field_errors?: string[]; detail?: string } } };
+      const msg = apiErr.response?.data?.non_field_errors?.[0]
+        || apiErr.response?.data?.detail
+        || "Login failed. Check your credentials.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="page">
-      <h1 className="page-title">{translate(content.login.title)}</h1>
-      <h2 className="page-subtitle">{translate(content.login.subtitle)}</h2>
-      <p className="page-description">{translate(content.login.description)}</p>
+    <div className="page page-narrow">
+      <div className="form-container">
+        <h1>Welcome back</h1>
+        <p className="form-subtitle">Log in to your MtaaM account</p>
 
-      <form className="login-form" onSubmit={handleLogin}>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          autoComplete="email"
-          placeholder={translate("Email Address")}
-          className="form-input"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              className="form-input"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          autoComplete="current-password"
-          placeholder={translate("Password")}
-          className="form-input"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              className="form-input"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        {error && <p className="error">{error}</p>}
+          {error && <div className="form-error">{error}</div>}
 
-        <Button label={loading ? translate("Logging in...") : translate("Log In")} />
-      </form>
+          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+            {loading ? "Logging in..." : "Log In"}
+          </button>
+        </form>
 
-      <p className="redirect-text">
-        {translate("Don’t have an account?")}{" "}
-        <Link to="/signup" className="redirect-link">
-          {translate("Sign up here")}
-        </Link>
-      </p>
+        <div className="form-footer">
+          Don't have an account? <Link to="/signup">Sign up</Link>
+        </div>
+      </div>
     </div>
   );
 };

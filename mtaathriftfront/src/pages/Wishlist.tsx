@@ -1,59 +1,75 @@
 import React, { useEffect, useState } from "react";
-import { getWishlist, removeWishlistItem } from "../services/api";
+import { getWishlist, removeWishlistItem, addToCart } from "../services/api";
+import { FiTrash2, FiHeart, FiShoppingCart } from "react-icons/fi";
+import { toast } from "react-toastify";
+import type { WishlistItem } from "../types/types";
+import { Link } from "react-router-dom";
 
 const Wishlist: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [wishlist, setWishlist] = useState<any[]>([]);
+  const [items, setItems] = useState<WishlistItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const fetchWishlist = async () => {
-    try {
-      const res = await getWishlist();
-      setWishlist(res.data);
-    } catch (err) {
-      console.error("Failed to fetch wishlist:", err);
-    }
-  };
-
- useEffect(() => {
- 
-  const fetchData = async () => {
-    try {
-      const res = await getWishlist();
-      setWishlist(res.data); 
-    } catch (err) {
-      console.error("Failed to fetch cart:", err);
-    }
-  };
-
-  fetchData();
-}, []);
+  useEffect(() => {
+    getWishlist()
+      .then((data) => setItems(Array.isArray(data) ? data : []))
+      .catch(() => toast.error("Failed to load wishlist"))
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleRemove = async (id: number) => {
     try {
       await removeWishlistItem(id);
-      fetchWishlist();
-    } catch (err) {
-      console.error("Failed to remove item:", err);
+      setItems(items.filter((i) => i.id !== id));
+      toast.success("Removed from wishlist");
+    } catch {
+      toast.error("Failed to remove");
     }
   };
 
+  const handleMoveToCart = async (item: WishlistItem) => {
+    try {
+      await addToCart(item.id);
+      toast.success("Moved to cart");
+    } catch {
+      toast.error("Failed to add to cart");
+    }
+  };
+
+  if (loading) return <div className="page"><p className="text-muted">Loading wishlist...</p></div>;
+
   return (
     <div className="page">
-      <h1>My Wishlist</h1>
+      <div className="page-header">
+        <h1>My Wishlist</h1>
+        <p>{items.length} saved item{items.length !== 1 ? "s" : ""}</p>
+      </div>
 
-      {wishlist.length === 0 ? (
-        <p>Your wishlist is empty.</p>
+      {items.length === 0 ? (
+        <div className="empty-state">
+          <div className="icon"><FiHeart size={48} /></div>
+          <h3>Your wishlist is empty</h3>
+          <p>Save items you love and come back to them later</p>
+          <Link to="/search" className="btn btn-primary">Browse Products</Link>
+        </div>
       ) : (
-        wishlist.map((item) => (
-          <div key={item.id} className="card">
-            <h3>{item.product}</h3>
-            <p>Price: {item.price}</p>
-
-            <button onClick={() => handleRemove(item.id)}>
-              Remove
-            </button>
-          </div>
-        ))
+        <div className="wishlist-grid">
+          {items.map((item) => (
+            <div className="wishlist-card" key={item.id}>
+              <div>
+                <h3>{item.product}</h3>
+                <div className="price">KSh {item.price?.toLocaleString() || "—"}</div>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button className="btn btn-primary btn-sm" onClick={() => handleMoveToCart(item)}>
+                  <FiShoppingCart size={14} /> Add to Cart
+                </button>
+                <button className="btn btn-ghost btn-sm" onClick={() => handleRemove(item.id)} style={{ color: "var(--danger)" }}>
+                  <FiTrash2 size={14} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

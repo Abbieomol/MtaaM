@@ -1,61 +1,62 @@
 import { useState } from "react";
-import content from "../content";
-import Card from "../components/Card";
-//import Navbar from "../components/Navbar";
 import { mockNotifications } from "../data/mockNotifications";
-import "../App.css";
+import { FiBell } from "react-icons/fi";
 
-function Notifications() {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("All");
+type Category = "All" | "Orders" | "Offers" | "Messages";
 
-  const filteredNotifications = notificationsEnabled
-    ? mockNotifications.filter((n) =>
-        selectedCategory === "All"
-          ? true
-          : n.category === selectedCategory
-      )
-    : [];
+const Notifications: React.FC = () => {
+  const [activeFilter, setActiveFilter] = useState<Category>("All");
+
+  const filtered = activeFilter === "All"
+    ? mockNotifications
+    : mockNotifications.filter((n) => n.category === activeFilter);
+
+  const dotClass = (cat: string) => {
+    if (cat === "Orders") return "notif-dot order";
+    if (cat === "Offers") return "notif-dot offer";
+    return "notif-dot message";
+  };
 
   return (
-    <><h1 className="page-title">{content.notifications.title}</h1><h2 className="page-subtitle">{content.notifications.subtitle}</h2><p className="page-description">
-    {content.notifications.description}
-  </p><div className="filters">
-      <label>
-        <input
-          type="checkbox"
-          checked={notificationsEnabled}
-          onChange={() => setNotificationsEnabled(!notificationsEnabled)} />
-        Enable Notifications
-      </label>
-    </div><div className="filters">
-      <label htmlFor="category">Filter by Category</label>
-      <select
-        id="category"
-        value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
-      >
-        {content.notifications.categories.map((cat) => (
-          <option key={cat}>{cat}</option>
+    <div className="page page-narrow" style={{ maxWidth: 700 }}>
+      <div className="page-header">
+        <h1>Notifications</h1>
+        <p>Stay updated on orders, offers, and messages</p>
+      </div>
+
+      <div className="notif-filters">
+        {(["All", "Orders", "Offers", "Messages"] as Category[]).map((cat) => (
+          <button
+            key={cat}
+            className={`notif-filter ${activeFilter === cat ? "active" : ""}`}
+            onClick={() => setActiveFilter(cat)}
+          >
+            {cat}
+          </button>
         ))}
-      </select>
-    </div><div className="card-grid">
-      {notificationsEnabled ? (
-        filteredNotifications.length > 0 ? (
-          filteredNotifications.map((n) => (
-            <Card
-              key={n.id}
-              title={n.title}
-              description={n.description} />
-          ))
-        ) : (
-          <p>No notifications in this category.</p>
-        )
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="empty-state">
+          <div className="icon"><FiBell size={48} /></div>
+          <h3>No notifications</h3>
+          <p>You're all caught up!</p>
+        </div>
       ) : (
-        <p>Notifications are turned off.</p>
+        <div className="notif-list">
+          {filtered.map((notif) => (
+            <div className="notif-item" key={notif.id}>
+              <div className={dotClass(notif.category)} />
+              <div>
+                <h3>{notif.title}</h3>
+                <p>{notif.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
-    </div></>
+    </div>
   );
-}
+};
 
 export default Notifications;

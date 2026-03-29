@@ -7,7 +7,7 @@ type Props = {
 };
 
 interface User {
-  user_type?: "customer" | "vendor"; 
+  role?: "customer" | "vendor";
 }
 
 const ProtectedRoute = ({ children, allowedRoles }: Props) => {
@@ -27,8 +27,8 @@ const ProtectedRoute = ({ children, allowedRoles }: Props) => {
 
   if (
     allowedRoles &&
-    user?.user_type &&
-    !allowedRoles.includes(user.user_type)
+    user?.role &&
+    !allowedRoles.includes(user.role)
   ) {
     return <Navigate to="/" replace />;
   }

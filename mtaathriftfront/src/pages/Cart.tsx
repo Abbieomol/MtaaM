@@ -1,83 +1,101 @@
 import React, { useEffect, useState } from "react";
 import { fetchCart, removeFromCart, updateCartItem } from "../services/api";
-import type { CartItem, Product } from "../types/types";
-
-// Keep this internal if the API returns mixed types
-type RawCartItem = {
-  id: string | number;
-  product: Product;
-  price: string | number;
-  quantity: string | number;
-};
+import { FiTrash2, FiShoppingBag } from "react-icons/fi";
+import { toast } from "react-toastify";
+import type { CartItem } from "../types/types";
+import { Link } from "react-router-dom";
 
 const Cart: React.FC = () => {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Memoize loadCart to satisfy exhaustive-deps if needed
-  useEffect(() => {
-    const loadCart = async (): Promise<void> => {
-      try {
-        const data: RawCartItem[] = await fetchCart();
-        // Normalize data once during fetch
-        const numericData: CartItem[] = data.map((item) => ({
-          ...item,
-          id: Number(item.id),
-          price: Number(item.price),
-          quantity: Number(item.quantity),
-        })) as CartItem[]; 
-        
-        setCart(numericData);
-      } catch (err) {
-        console.error("Failed to fetch cart:", err);
-      }
-    };
-
-    loadCart();
-  }, []);
-
-  // Use number for id since we normalized it in loadCart
-  const handleRemove = async (id: number) => {
+  const loadCart = async () => {
     try {
-      await removeFromCart(id);
-      setCart((prev) => prev.filter((item) => item.id !== id));
-    } catch (err) {
-      console.error("Failed to remove item:", err);
+      const data = await fetchCart();
+      setItems(Array.isArray(data) ? data : []);
+    } catch {
+      toast.error("Failed to load cart");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleUpdate = async (id: number, qty: number) => {
-    if (qty < 1) return;
+  useEffect(() => { loadCart(); }, []);
+
+  const handleRemove = async (itemId: number) => {
     try {
-      await updateCartItem(id, qty);
-      setCart((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, quantity: qty } : item
-        )
-      );
-    } catch (err) {
-      console.error("Failed to update item:", err);
+      await removeFromCart(itemId);
+      setItems(items.filter((i) => i.id !== itemId));
+      toast.success("Removed from cart");
+    } catch {
+      toast.error("Failed to remove item");
     }
   };
+
+  const handleQuantityChange = async (itemId: number, quantity: number) => {
+    if (quantity < 1) return;
+    try {
+      await updateCartItem(itemId, quantity);
+      setItems(items.map((i) => (i.id === itemId ? { ...i, quantity } : i)));
+    } catch {
+      toast.error("Failed to update quantity");
+    }
+  };
+
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  if (loading) return <div className="page"><p className="text-muted">Loading cart...</p></div>;
 
   return (
     <div className="page">
-      <h1>My Cart</h1>
-      {cart.length === 0 ? (
-        <p>Your cart is empty.</p>
+      <div className="page-header">
+        <h1>Shopping Cart</h1>
+        <p>{items.length} item{items.length !== 1 ? "s" : ""} in your cart</p>
+      </div>
+
+      {items.length === 0 ? (
+        <div className="empty-state">
+          <div className="icon"><FiShoppingBag size={48} /></div>
+          <h3>Your cart is empty</h3>
+          <p>Browse products and add items to your cart</p>
+          <Link to="/search" className="btn btn-primary">Start Shopping</Link>
+        </div>
       ) : (
-        cart.map((item) => (
-          <div key={item.id} className="card">
-            <h3>{item.product.name}</h3>
-            <p>Price: ${item.price}</p>
-            <input
-              type="number"
-              min={1}
-              value={item.quantity}
-              onChange={(e) => handleUpdate(item.id, Number(e.target.value))}
-            />
-            <button onClick={() => handleRemove(item.id)}>Remove</button>
+        <div>
+          <div className="cart-layout">
+            {items.map((item) => (
+              <div className="cart-item" key={item.id}>
+                <div className="cart-item-info">
+                  <h3>{item.product}</h3>
+                  <p>KSh {item.price.toLocaleString()} each</p>
+                </div>
+                <div className="cart-item-controls">
+                  <input
+                    type="number"
+                    className="qty-input"
+                    min={1}
+                    value={item.quantity}
+                    onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1)}
+                  />
+                  <span style={{ fontWeight: 600, minWidth: 80, textAlign: "right" }}>
+                    KSh {(item.price * item.quantity).toLocaleString()}
+                  </span>
+                  <button className="btn btn-ghost btn-sm" onClick={() => handleRemove(item.id)} style={{ color: "var(--danger)" }}>
+                    <FiTrash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))
+
+          <div className="cart-summary mt-md">
+            <div className="total">
+              <span>Total</span>
+              <span>KSh {total.toLocaleString()}</span>
+            </div>
+            <button className="btn btn-primary btn-full">Proceed to Checkout</button>
+          </div>
+        </div>
       )}
     </div>
   );
