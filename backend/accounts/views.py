@@ -15,14 +15,12 @@ def get_tokens_for_user(user):
 
 
 class SignupView(APIView):
-    permission_classes = [AllowAny]  
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-
-    
             tokens = get_tokens_for_user(user)
 
             return Response(
@@ -30,18 +28,19 @@ class SignupView(APIView):
                     "user": {
                         "id": user.id,
                         "email": user.email,
-                        "role": getattr(user, "role", "customer"),
+                        "role": user.role,
                     },
                     "token": tokens["access"],
                     "refresh": tokens["refresh"],
                 },
                 status=status.HTTP_201_CREATED,
             )
-        # Return serializer errors if invalid
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -51,10 +50,9 @@ class LoginView(APIView):
                 "user": {
                     "id": user.id,
                     "email": user.email,
-                    "email": user.email,
-                    "role": getattr(user, "role", "customer")
+                    "role": user.role,
                 },
                 "token": tokens["access"],
-                "refresh": tokens["refresh"]
+                "refresh": tokens["refresh"],
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

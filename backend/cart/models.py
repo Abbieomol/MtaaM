@@ -1,13 +1,13 @@
 from django.db import models
-from django.utils import timezone
 from accounts.models import User
 from products.models import Product
+
 
 class Cart(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        related_name="cart"  # unique
+        related_name="cart"
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -24,7 +24,7 @@ class CartItem(models.Model):
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
-        related_name="cart_items"  # unique from Wishlist
+        related_name="cart_items"
     )
     quantity = models.PositiveIntegerField(default=1)
     added_at = models.DateTimeField(auto_now_add=True)
@@ -34,23 +34,3 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
-
-
-class WishlistItem(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="cart_wishlist_items"  # unique from wishlist app
-    )
-    product = models.ForeignKey(
-        Product,
-        on_delete=models.CASCADE,
-        related_name="cart_wishlist_items"  
-    )
-    added_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('user', 'product')
-
-    def __str__(self):
-        return f"{self.product.name} in {self.user.email}'s Wishlist"

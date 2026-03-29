@@ -1,101 +1,36 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from .models import Product
-from cart.models import Cart, CartItem
-from wishlist.models import Wishlist, WishlistItem
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from .serializers import ProductSerializer
 
 
-@api_view(['POST'])
-def add_to_cart(request):
-    user = request.user
-    product_id = request.data.get("product_id")
-    quantity = int(request.data.get("quantity", 1))
+@api_view(['GET', 'POST'])
+def product_list(request):
+    if request.method == 'GET':
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
 
-    cart, _ = Cart.objects.get_or_create(user=user)
-    product = Product.objects.get(id=product_id)
-
-    item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-
-    if not created:
-        item.quantity += quantity
-    else:
-        item.quantity = quantity
-
-    item.save()
-
-    return Response({"message": "Added to cart"})
+    if request.method == 'POST':
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(vendor=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
-def view_cart(request):
-    cart, _ = Cart.objects.get_or_create(user=request.user)
-    items = cart.items.all()
+@api_view(['GET', 'DELETE'])
+def product_detail(request, pk):
+    try:
+        product = Product.objects.get(pk=pk)
+    except Product.DoesNotExist:
+        return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    data = []
-    for item in items:
-        data.append({
-            "id": item.id,
-            "product": item.product.name,
-            "price": item.product.price,
-            "quantity": item.quantity
-        })
+    if request.method == 'GET':
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
 
-    return Response(data)
-
-
-@api_view(['POST'])
-def update_cart_item(request):
-    item_id = request.data.get("item_id")
-    quantity = int(request.data.get("quantity"))
-
-    item = CartItem.objects.get(id=item_id)
-    item.quantity = quantity
-    item.save()
-
-    return Response({"message": "Updated"})
-
-
-@api_view(['DELETE'])
-def remove_from_cart(request, item_id):
-    item = CartItem.objects.get(id=item_id)
-    item.delete()
-    return Response({"message": "Removed"})
-
-
-@api_view(['POST'])
-def add_to_wishlist(request):
-    user = request.user
-    product_id = request.data.get("product_id")
-
-    wishlist, _ = Wishlist.objects.get_or_create(user=user)
-    product = Product.objects.get(id=product_id)
-
-    WishlistItem.objects.get_or_create(wishlist=wishlist, product=product)
-
-    return Response({"message": "Added to wishlist"})
-
-
-@api_view(['GET'])
-def view_wishlist(request):
-    wishlist, _ = Wishlist.objects.get_or_create(user=request.user)
-    items = wishlist.items.all()
-
-    data = []
-    for item in items:
-        data.append({
-            "id": item.id,
-            "product": item.product.name,
-            "price": item.product.price
-        })
-
-    return Response(data)
-
-
-@api_view(['DELETE'])
-def remove_from_wishlist(request, item_id):
-    item = WishlistItem.objects.get(id=item_id)
-    item.delete()
-    return Response({"message": "Removed"})
+    if request.method == 'DELETE':
+        product.delete()
+        return Response({"message": "Product deleted"}, status=status.HTTP_204_NO_CONTENT)

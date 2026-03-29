@@ -47,13 +47,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
 
+    'accounts',
     'products',
     'cart',
     'orders',
     'notifications',
     'wishlist',
     'follow',
-    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -134,6 +134,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -142,7 +145,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=40),   
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=40),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
