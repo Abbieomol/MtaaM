@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Todo
 from django.contrib.auth import authenticate
 
 
@@ -24,6 +24,20 @@ class SignupSerializer(serializers.ModelSerializer):
             role=validated_data['role'],
         )
         return user
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'role', 'location', 'first_name', 'last_name']
+        read_only_fields = ['email', 'role']
+
+
+class TodoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Todo
+        fields = ['id', 'user', 'title', 'completed', 'created_at']
+        read_only_fields = ['user']
 
 
 class LoginSerializer(serializers.Serializer):
